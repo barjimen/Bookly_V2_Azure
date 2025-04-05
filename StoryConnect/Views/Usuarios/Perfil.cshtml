@@ -1,0 +1,559 @@
+﻿@model StoryConnect.Models.HomeUsuario
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Usuarios.Nombre's Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        /* New Header Style */
+        .profile-header {
+            background-color: var(--secondary-bg);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+            
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid var(--accent-color);
+            overflow: hidden;
+            background-color: #9c4a6e;
+            margin-right: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-main-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(0,0,0,0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            min-width: 90px;
+        }
+
+        .stat-number {
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .stat-label {
+            color: var(--muted-text);
+            font-size: 0.9rem;
+        }
+
+        .profile-location {
+            color: var(--muted-text);
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .edit-btn {
+            background-color: var(--highlight);
+            border: none;
+            color: var(--text-color);
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+            .edit-btn:hover {
+                background-color: #0563c5;
+                transform: translateY(-2px);
+            }
+
+        .joined-tag {
+            color: var(--muted-text);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Accordion Styles */
+        .accordion-item {
+            background-color: #cccccc;
+            border: none;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .accordion-button {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+            .accordion-button:not(.collapsed) {
+                background-color: var(--secondary-bg);
+                color: var(--text-color);
+                box-shadow: none;
+            }
+
+            .accordion-button:focus {
+                box-shadow: none;
+                border-color: transparent;
+            }
+
+            .accordion-button::after {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e9ecef'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+            }
+
+            .accordion-button:not(.collapsed)::after {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e9ecef'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+            }
+
+        .book-list-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+        }
+
+            .book-list-item:hover {
+                background-color: rgba(255,255,255,0.05);
+            }
+
+            .book-list-item:last-child {
+                border-bottom: none;
+            }
+
+        .book-cover-small {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            margin-right: 15px;
+        }
+
+        .book-info {
+            flex: 1;
+            color:black;
+        }
+
+        .book-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: black;
+        }
+
+        .book-author {
+            font-size: 0.9rem;
+            color: var(--muted-text);
+            margin-bottom: 5px;
+            color: black;
+        }
+
+        .book-date {
+            font-size: 0.8rem;
+            color: var(--muted-text);
+            color: black;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .badge-want {
+            background-color: #ffba08;
+            color: #1a2635;
+        }
+
+        .badge-reading {
+            background-color: #3a86ff;
+            color: white;
+        }
+
+        .badge-read {
+            background-color: #2a9d8f;
+            color: white;
+        }
+
+        .badge-dnf {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .category-icon {
+            margin-right: 10px;
+        }
+
+        .badge-count {
+            background-color: var(--highlight);
+            color: white;
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-weight: 500;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .reading-goal {
+            background-color: var(--secondary-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .goal-label {
+            font-size: 14px;
+            color: var(--muted-text);
+        }
+
+        .goal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .goal-progress {
+            height: 10px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-color);
+        }
+
+        .goal-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .goal-percent {
+            background-color: #2a9d8f;
+            color: white;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-weight: 500;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color:black;
+        }
+
+        .see-all {
+            color: var(--highlight);
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container rounded" style="padding-top: 2rem!important; padding-bottom:6rem!important; background-color:whitesmoke">
+        <!-- New Header Design -->
+        <div class="profile-header">
+            <div class="profile-main-info">
+                <div class="profile-avatar">
+                    <img src="~/images/avatar.jpg" alt="Profile" onerror="this.src='https://via.placeholder.com/100x100'" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div>
+                    <h2 class="mb-2">@Model.Usuarios.Nombre</h2>
+                    <div class="d-flex align-items-center">
+                        <div class="joined-tag">
+                            @{
+                                var diasRegistrado = (DateTime.Now - Model.Usuarios.FechaRegistro).Days;
+
+                            }
+                            <i class="fas fa-calendar-alt me-2"></i> Miembro desde hace @diasRegistrado días.
+                        </div>
+                    </div>
+                </div>
+                <button class="edit-btn ms-auto">
+                    <i class="fas fa-pencil-alt me-2"></i> Edit Profile
+                </button>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-number">@Model.CountLibrosPred.Sum(c => c.NumLibros)</span>
+                    <span class="stat-label">Libros totales</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Books by Status Section (Accordion) -->
+        <div class="mt-5">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-book me-2"></i> Librería de @Model.Usuarios.Nombre
+                </h3>
+                <a asp-action="MisLibros" asp-controller="Usuarios" class="see-all">See all</a>
+            </div>
+
+            <div class="accordion" id="booksAccordion">
+                @{
+                    // Definimos el orden de las listas predefinidas
+                    var listasPredefinidas = new Dictionary<int, (string Name, string Color, string Icon, string BadgeClass)>
+                {
+                { 3, ("Próximas lecturas", "#ffba08", "fa-bookmark", "badge-want") },
+                { 1, ("Leyendo", "#3a86ff", "fa-book-open", "badge-reading") },
+                { 2, ("Leídos", "#2a9d8f", "fa-check-circle", "badge-read") },
+                { 4, ("Sin terminar", "#e63946", "fa-times-circle", "badge-dnf") }
+                };
+
+                    // Para cada lista predefinida
+                    int accordionIndex = 0;
+                    foreach (var lista in listasPredefinidas)
+                    {
+                        accordionIndex++;
+                        int listaId = lista.Key;
+                        string listaNombre = lista.Value.Name;
+                        string color = lista.Value.Color;
+                        string icon = lista.Value.Icon;
+                        string badgeClass = lista.Value.BadgeClass;
+
+                        // Obtenemos el conteo de libros para esta lista
+                        var conteo = 0;
+                        var conteoItem = Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.Usuarios.Id && c.ListaId == listaId);
+                        if (conteoItem != null)
+                        {
+                            conteo = conteoItem.NumLibros;
+                        }
+
+                        // Obtenemos los libros para esta lista
+                        var libros = Model.LibrosListasPred
+                        .Where(l => l.Id == Model.Usuarios.Id && l.ListaId == listaId)
+                        .OrderByDescending(l => l.Agregado_lista)
+                        .ToList();
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="heading@(accordionIndex)">
+                                <button class="accordion-button @(accordionIndex > 1 ? "collapsed" : "")"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapse@(accordionIndex)"
+                                        aria-expanded="@(accordionIndex == 1 ? "true" : "false")"
+                                        aria-controls="collapse@(accordionIndex)">
+                                    <i class="fas @icon category-icon" style="color: @color"></i>
+                                    @listaNombre
+                                    <span class="badge-count">@conteo</span>
+                                </button>
+                            </h2>
+                            <div id="collapse@(accordionIndex)"
+                                 class="accordion-collapse collapse @(accordionIndex == 2 ? "show" : "")"
+                                 aria-labelledby="heading@(accordionIndex)"
+                                 data-bs-parent="#booksAccordion">
+                                <div class="accordion-body p-0">
+                                    @if (libros.Count == 0)
+                                    {
+                                        <div class="p-4 text-center text-muted">
+                                            <i class="fas fa-book me-2"></i> No hay libros
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var libro in libros)
+                                        {
+                                            <div class="book-list-item">
+                                                <a href="/Libros/Details/@libro.IdLibro">
+                                                    <img src="~/images/books/@libro.Portada" alt="@libro.Titulo" class="book-cover-small" />
+                                                </a>
+                                                <div class="book-info">
+                                                    <div class="book-title">@libro.Titulo</div>
+                                                    <div class="book-author">by @libro.Autor</div>
+                                                    <div class="book-date">Añadido el @libro.Agregado_lista.ToString("MMM dd, yyyy")</div>
+                                                </div>
+                                                <span class="status-badge @badgeClass">@listaNombre</span>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Reading Goals Section -->
+        @if (Model.ObjetivosUsuarios != null && Model.ObjetivosUsuarios.Count() > 0)
+{
+    <div class="mt-5">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="fas fa-chart-line me-2"></i> Mis objetivos @Model.Usuarios.Nombre
+            </h3>
+            
+
+                        
+            @if (Model.ObjetivosUsuarios.Count() > 2)
+            {
+                <a asp-action="MisObjetivos" asp-controller="Usuarios" asp-route-id="@Model.Usuarios.Id" class="btn btn-info">Ver mis objetivos o editarlos</a>
+            }
+        </div>
+
+        @foreach (var objetivo in Model.ObjetivosUsuarios.Take(2)) // Solo los primeros dos
+        {
+            var percentComplete = (objetivo.ProgresoActual * 100) / objetivo.Meta;
+
+            <div class="reading-goal">
+                <div class="goal-header">
+                    <div class="goal-label">Objetivo</div>
+                    <div class="goal-label">
+                        <i class="fas fa-book me-1"></i> @objetivo.ProgresoActual/@objetivo.Meta books
+                        <span class="ms-2">•</span>
+                        @{
+                                    var dias = (DateTime.Now - objetivo.Fin).Duration().Days;
+
+                        }
+                                <span class="ms-2">@dias días restantes.</span>
+                    </div>
+                </div>
+
+                @if(objetivo.ProgresoActual > objetivo.Meta )
+                {
+                            <h4 class="goal-title">@objetivo.NombreObjetivo</h4>
+                            <p>Has completado el objetivo!!!🙌</p>
+                }
+
+                <div class="goal-progress">
+                    <div class="progress-bar" style="width: @percentComplete%"></div>
+                </div>
+
+                <div class="goal-stats">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="progress-marker" style="width: 20px; height: 20px; background-color: var(--accent-color); border-radius: 4px;"></div>
+                        <span>@objetivo.ProgresoActual/@objetivo.Meta @objetivo.TipoObjetivo </span>
+                    </div>
+                    <div class="goal-percent">@percentComplete%</div>
+                </div>
+            </div>
+        }
+
+                <div>
+
+                    <button id="insertarObjetivo" class="btn btn-primary">Añadir Objetivo</button>
+
+                    <div id="modalObjetivo" class="modal" tabindex="-1" aria-labelledby="modalObjetivoLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content p-4">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" id="modalObjetivoLabel">Nuevo Objetivo</h3>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form id="formObjetivo" method="post" action="/Usuarios/InsertObjetivo">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="titulo" class="form-label fw-bold">Título:</label>
+                                            <input type="text" id="titulo" name="NombreObjetivo" class="form-control" placeholder="Título del objetivo" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="fecha_fin" class="form-label fw-bold">Fecha de fin:</label>
+                                            <input type="date" id="fecha_fin" name="Fin" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="tipo" class="form-label fw-bold">Tipo:</label>
+                                            <select id="tipo" name="TipoObjetivo" class="form-select" required>
+                                                <option value="" disabled selected>Selecciona el tipo de objetivo</option>
+                                                <option value="libros">libros</option>
+                                                <option value="paginas">Páginas</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="meta" class="form-label fw-bold">Meta:</label>
+                                            <input type="number" id="meta" name="Meta" class="form-control" placeholder="" min="1" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        <button type="submit" class="btn btn-success">Guardar Objetivo</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+    </div>
+}   
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById("modalObjetivo"));
+
+            document.getElementById("insertarObjetivo").addEventListener("click", function () {
+                modal.show();
+            });
+        });
+    </script>
+</body>
+</html>

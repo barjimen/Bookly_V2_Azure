@@ -1,0 +1,161 @@
+﻿@model MisLibros
+
+
+    <!-- Filtros -->
+<div class="container" style="padding-top: 2rem!important; padding-bottom:6rem!important">
+    <div class="row mb-4">
+        <div class="col-12 rounded">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Perfil">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" style="color:black">Mis Libros</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+        <h1>Mi Biblioteca</h1>
+
+        <!-- Filtros -->
+        <div class="filters">
+        <button id="btnAll" class="filter-btn active">All <span>@Model.CountLibrosPred.Sum(c => c.NumLibros)</span></button>
+        <button id="btnWantToRead" class="filter-btn">Want to Read <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 1)?.NumLibros ?? 0)</span></button>
+        <button id="btnCurrentlyReading" class="filter-btn">Currently Reading <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 2)?.NumLibros ?? 0)</span></button>
+        <button id="btnRead" class="filter-btn">Read <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 3)?.NumLibros ?? 0)</span></button>
+        <button id="btnDidNotFinish" class="filter-btn">Did Not Finish <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 4)?.NumLibros ?? 0)</span></button>
+        </div>
+    </div>
+
+    <!-- Aquí se cargarán los libros mediante AJAX -->
+    <div id="libros-container">
+    </div>
+
+
+<style>
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding-bottom: 15px!important;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .filters {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .filter-btn {
+        background-color: #f0f0f0;
+        border: 2px solid #ccc;
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        text-transform: capitalize;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+        .filter-btn.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .filter-btn:hover {
+            background-color: #e6e6e6;
+        }
+
+    .count {
+        font-size: 0.9rem;
+        color: #666;
+        margin-left: 8px;
+    }
+
+    .filter-btn span.count {
+        display: inline-block;
+        background-color: #ddd;
+        border-radius: 12px;
+        padding: 2px 8px;
+        font-weight: normal;
+        font-size: 0.9rem;
+        margin-left: 10px;
+    }
+
+    #libros-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+</style>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Cargar libros al inicio
+        cargarLibros();
+
+        // Evento para los botones de filtro
+        $(".filter-btn").click(function() {
+            $(".filter-btn").removeClass("active");
+            $(this).addClass("active");
+
+            const idLista = obtenerIdListaSegunBoton(this.id);
+            filtrarLibros(idLista);
+        });
+
+            function cargarLibros() {
+        $.ajax({
+            url: '@Url.Action("FiltrarMisLibros", "Usuarios")',
+            data: { idUsuario: @Model.IdUsuario, idLista: 0 }, // Cargar "todos" por defecto
+            type: 'GET',
+            success: function(result) {
+                $("#libros-container").html(result);
+            }
+        });
+    }
+
+
+        function filtrarLibros(idLista) {
+            $.ajax({
+                url: '@Url.Action("FiltrarMisLibros", "Usuarios")',
+                data: {
+                    idUsuario: @Model.IdUsuario,
+                    idLista: idLista
+                },
+                type: 'GET',
+                success: function(result) {
+                    // Reemplazar solo los libros, no toda la vista
+                    $("#libros-container").html(result);
+                }
+            });
+        }
+
+        function obtenerIdListaSegunBoton(buttonId) {
+            switch(buttonId) {
+                case "btnAll": return 0; // O el id para "todos"
+                case "btnWantToRead": return 1; // Ajusta estos IDs según tu base de datos
+                case "btnCurrentlyReading": return 2;
+                case "btnRead": return 3;
+                case "btnDidNotFinish": return 4;
+                default: return 0;
+            }
+        }
+    });
+</script>

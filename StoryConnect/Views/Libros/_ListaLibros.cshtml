@@ -1,0 +1,65 @@
+﻿@model Biblioteca
+
+@foreach (var item in Model.Libros)
+{
+    <div class="col">
+        <div class="card h-100 shadow-sm" style="transition: transform 0.3s ease;">
+            <div class="position-relative">
+                @if (!string.IsNullOrEmpty(item.ImagenPortada))
+                {
+                    <img src="~/images/books/@item.ImagenPortada" class="card-img-top" alt="@item.Titulo" style="height: 200px; object-fit: cover;">
+                }
+                else
+                {
+                    <img src="/images/book-placeholder.jpg" class="card-img-top" alt="@item.Titulo" style="height: 200px; object-fit: cover;">
+                }
+                <div class="position-absolute top-0 end-0 p-2">
+                    <span class="badge bg-primary rounded-pill">
+                        <i class="bi bi-star-fill"></i> @item.CalificacionPromedio
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-truncate" title="@item.Titulo">@item.Titulo</h5>
+                <p class="card-text text-muted mb-1">
+                    <i class="bi bi-person"></i> @item.NombreAutor
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle
+                            @(item.idLista == 1 ? "btn-primary" :
+                              item.idLista == 2 ? "btn-success" :
+                              item.idLista == 3 ? "btn-warning" : "btn-secondary")"
+                                type="button" id="dropdownMenuButton-@item.Id"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                            @if (item.idLista == 0)
+                            {
+                                <span>Añadir a lista</span>
+                            }
+                            else if (item.idLista == 1)
+                            {
+                                <span>Leyendo</span>
+                            }
+                            else if (item.idLista == 2)
+                            {
+                                <span>Leído</span>
+                            }
+                            else if (item.idLista == 3)
+                            {
+                                <span>Próxima Lectura</span>
+                            }
+                        </button>
+
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-@item.Id">
+                            <button class="dropdown-item mover-libro" data-idLibro="@item.Id" data-destino="1" data-origen="@item.idLista">Leyendo</button>
+                            <button class="dropdown-item mover-libro" data-idLibro="@item.Id" data-destino="2" data-origen="@item.idLista">Leído</button>
+                            <button class="dropdown-item mover-libro" data-idLibro="@item.Id" data-destino="3" data-origen="@item.idLista">Próxima Lectura</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+}
+@if (Model.Libros == null)
+{
+    <h2>No hay libros</h2>
+}

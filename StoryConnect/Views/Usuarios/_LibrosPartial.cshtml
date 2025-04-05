@@ -1,0 +1,171 @@
+﻿@model List<StoryConnect.Models.LibrosListasPredefinidas>
+<div class="container" style="padding-bottom:6rem!important">
+    <div class="books-container">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var libro in Model)
+            {
+                <div class="book-card">
+                    <!-- Imagen del libro -->
+                    <div class="book-image">
+                        @if (!string.IsNullOrEmpty(libro.Portada))
+                        {
+                            <img src="~/images/books/@libro.Portada" alt="@libro.Titulo" class="img-fluid" />
+                        }
+                        else
+                        {
+                            <div class="book-placeholder">
+                                <i class="bi bi-book" style="font-size: 3rem; color: #999;"></i>
+                                <p class="mt-2">Sin imagen</p>
+                            </div>
+                        }
+                    </div>
+                    <!-- Información del libro -->
+                    <div class="book-info">
+                        <h5>@libro.Titulo</h5>
+                        <p class="author">@libro.Autor</p>
+                    </div>
+                    <div class="card-footer bg-transparent py-3 border-top-0">
+                        <div class="d-flex gap-2">
+                            <a asp-action="Detalles" asp-controller="Libros" asp-route-id="@libro.Id"
+                               class="btn btn-sm flex-grow-1 rounded-pill shadow-sm"
+                               style="background-color: #e9ecef; color: #495057; border: none; transition: all 0.2s ease;">
+                                <i class="bi bi-eye"></i> Detalles
+                            </a>
+
+                            <div class="dropdown flex-grow-1">
+                                <button class="btn btn-sm rounded-pill shadow-sm w-100 dropdown-toggle
+                                @(libro.ListaId == 1 ? "btn-primary" :
+                                libro.ListaId == 2 ? "btn-success" :
+                                libro.ListaId == 3 ? "btn-warning" :
+                                libro.ListaId == 4 ? "btn-dark" : "btn-secondary")"
+                                        style="border: none; transition: all 0.2s ease;"
+                                        type="button" id="dropdownMenuButton-@libro.Id"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                    @if (libro.ListaId == 0)
+                                    {
+                                        <span><i class="bi bi-plus-circle me-1"></i>Lista</span>
+                                    }
+                                    else if (libro.ListaId == 1)
+                                    {
+                                        <span><i class="bi bi-book me-1"></i>Leyendo</span>
+                                    }
+                                    else if (libro.ListaId == 2)
+                                    {
+                                        <span><i class="bi bi-check-circle me-1"></i>Leído</span>
+                                    }
+                                    else if (libro.ListaId == 3)
+                                    {
+                                        <span><i class="bi bi-hourglass me-1"></i>Próxima</span>
+                                    }
+                                    else if (libro.ListaId == 4)
+                                    {
+                                        <span><i class="bi bi-x-circle me-1"></i>No terminado</span>
+                                    }
+                                </button>
+
+                                <div class="dropdown-menu shadow-sm border-0 rounded-3" aria-labelledby="dropdownMenuButton-@libro.Id">
+                                    <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="1" data-origen="@libro.ListaId">
+                                        <i class="bi bi-book text-primary me-2"></i>Leyendo
+                                    </button>
+                                    <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="2" data-origen="@libro.ListaId">
+                                        <i class="bi bi-check-circle text-success me-2"></i>Leído
+                                    </button>
+                                    <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="3" data-origen="@libro.ListaId">
+                                        <i class="bi bi-hourglass text-warning me-2"></i>Próxima Lectura
+                                    </button>
+                                    <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="4" data-origen="@libro.ListaId">
+                                        <i class="bi bi-x-circle text-dark me-2"></i>No Terminado
+                                    </button>
+                                    <div class="dropdown-divider"></div>
+                                    <button class="dropdown-item mover-libro text-danger" data-idLibro="@libro.Id" data-destino="0" data-origen="@libro.ListaId">
+                                        <i class="bi bi-trash me-2"></i>Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No hay libros en esta lista.</p>
+        }
+    </div>
+</div>
+
+<style>
+    .books-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 30px;
+        justify-items: center;
+        background-color: #f5f5f5;
+    }
+
+    .book-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        max-width: 300px;
+        height: 500px;
+        text-align: center;
+        padding: 15px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .book-image img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+
+    .book-placeholder {
+        width: 100%;
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        border-radius: 8px;
+        background: #ddd;
+    }
+
+    h1,h2,h3,h4,h5,h6, p{
+        color: dimgrey;
+    }
+</style>
+
+
+
+<script>
+    $(document).ready(function () {
+        // Book moving functionality (your original code)
+        $(".mover-libro").click(function () {
+            var idlibro = $(this).data("idlibro");
+            var destino = $(this).data("destino");
+            var origen = $(this).data("origen");
+
+            $.ajax({
+                url: '/Libros/MoverLibrosEntreListas',
+                type: 'POST',
+                data: { idlibro: idlibro, destino: destino, origen: origen },
+                success: function (response) {
+                    alert("item movido exitosamente.");
+                    location.reload(); // Recargar la página para actualizar la lista
+                },
+                error: function (xhr, status, error) {
+                    alert("Error al mover el item: " + xhr.responseText);
+                }
+            });
+        });
+</script>

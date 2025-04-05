@@ -1,0 +1,186 @@
+﻿:root {
+    --primary-bg: #2a282f;
+    --secondary-bg: #56425d;
+    --accent-color: #a286a9;
+    --text-color: #e3e1ea;
+    --muted-text: #d4d4d4;
+    --highlight: #037bfc;
+    --card-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    --card-radius: 12px;
+    --transition-speed: 0.3s;
+}
+
+body {
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding-bottom: 6rem;
+}
+
+.container {
+    padding-top: 2rem !important;
+    padding-bottom: 6rem !important;
+}
+
+/* Form Card Styles */
+.auth-card {
+    background-color: var(--secondary-bg);
+    border-radius: var(--card-radius);
+    padding: 30px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+    margin-top: 30px;
+}
+
+    .auth-card h2 {
+        font-weight: 600;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 2;
+    }
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+    .form-group label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+.form-control {
+    border-radius: 8px;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    transition: all var(--transition-speed);
+}
+
+    .form-control:focus {
+        box-shadow: 0 0 0 3px rgba(3, 123, 252, 0.25);
+        border-color: var(--highlight);
+    }
+
+/* Button Styles */
+.btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+.btn:hover{
+    color: black!important;
+}
+
+/* Link Styles */
+a {
+    color: var(--highlight);
+    text-decoration: none;
+    transition: all var(--transition-speed);
+}
+
+    a:hover {
+        color: #0563c5;
+        text-decoration: underline;
+    }
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: none;
+}
+
+.alert-danger {
+    background-color: rgba(230, 57, 70, 0.2);
+    color: #e63946;
+}
+
+.alert-success {
+    background-color: rgba(42, 157, 143, 0.2);
+    color: #2a9d8f;
+}
+
+/* Book Cards */
+.book-card {
+    background-color: white;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    transition: all var(--transition-speed);
+    overflow: hidden;
+    height: 100%;
+    position: relative;
+}
+
+    .book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+.book-cover {
+    height: 240px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.book-info {
+    padding: 15px;
+}
+
+.book-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-author {
+    color: var(--muted-text);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-year {
+    color: var(--muted-text);
+    font-size: 0.8rem;
+}
+
+.book-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.book-card .hover-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 240px;
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    padding: 20px;
+    opacity: 0;
+    transition: all var(--transition-speed);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.book-card:hover .hover-info {
+    opacity: 1;
+}

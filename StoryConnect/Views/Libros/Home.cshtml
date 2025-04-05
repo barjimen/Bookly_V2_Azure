@@ -1,0 +1,289 @@
+﻿@model LibrosLeyendoProgreso
+@{
+    var nombreUsuario = Context.Session.GetString("nombre");
+    var idUsuario = Context.Session.GetInt32("id");
+}
+    <title>Tu Biblioteca Personal</title>
+
+<div class="container-fluid" style="padding-top: 2rem!important; padding-bottom:6rem!important;">
+    <div class="d-flex justify-content-between align-items-center mb-4" style="background-color: #f4f2f9; padding: 20px; border-radius: 8px;">
+        <h1 style="color: #56425D; font-family: 'Arial', sans-serif; font-size: 30px; font-weight: bold;">¡Hola, @nombreUsuario!</h1>
+        <div class="d-flex justify-content-center flex-grow-1">
+            <h5 style="text-align: center; color: #6c757d; font-style: italic;">
+                “—Por los que miran las estrellas y piensan «ojalá…, ojalá», Rhys —dije.”<br>
+                “Él hizo sonar su vaso contra el mío.<br>
+                —Por las estrellas que escuchan… y los sueños que se hacen realidad.”<br>
+                ― Sarah J. Maas, A Court of Mist and Fury
+            </h5>
+        </div>
+        <img src="~/images/Libros.png" style="width:150px" />
+    </div>
+
+
+
+    <!-- Libros Leyendo Section -->
+    <div class="mb-5">
+        <h2>Libros que estas leyendo</h2>
+        <hr/>
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+            @if (Model.Leyendos.Count == 0)
+            {
+                <div class="col-12">
+                    <div class="empty-state text-center p-5">
+                        <div class="empty-icon mb-3">
+                            <i class="bi bi-book-open" style="font-size: 3rem; color: #56425D;"></i>
+                        </div>
+                        <h5>No tienes libros en lectura actualmente</h5>
+                        <p class="text-muted">¡Añade un libro!</p>
+                        <a asp-action="Index" asp-controller="Libros" class="btn btn-sm rounded-pill shadow-sm" style="background-color: #56425D; color: white;">
+                            <i class="bi bi-plus me-2"></i>
+                            Añadir libro
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @foreach (var libro in Model.Leyendos)
+                {
+                    <div class="col libro-item">
+                        <div class="card shadow-sm h-100 rounded-lg overflow-hidden border-0" style="transition: all 0.3s ease;">
+                            <!-- Imagen como protagonista -->
+                            <div class="position-relative">
+                                @if (!string.IsNullOrEmpty(libro.ImagenPortada))
+                                {
+                                    <img src="~/images/books/@libro.ImagenPortada" class="card-img-top" alt="@libro.Titulo" style="height: 280px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <img src="/images/book-placeholder.jpg" class="card-img-top" alt="@libro.Titulo" style="height: 280px; object-fit: cover;">
+                                }
+                            </div>
+
+                            <!-- Información del libro -->
+                            <div class="card-body p-3">
+                                <h5 class="card-title fw-bold text-truncate mb-1" title="@libro.Titulo">@libro.Titulo</h5>
+                                <p class="card-text text-muted mb-1 small">
+                                    <i class="bi bi-person-fill"></i> @libro.NombreAutor
+                                </p>
+
+                                <!-- Barra de progreso -->
+                                @{
+                                    var progresodata = Model.ProgresoLectura?.FirstOrDefault(p => p.idLibro == libro.Id);
+                                    @if (progresodata != null && progresodata.idLibro == libro.Id)
+                                    {
+                                        var progressbar = (progresodata.Pagina * 100) / libro.paginas;
+                                        <div class="mt-3 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <small class="text-muted">Progreso de lectura</small>
+                                                <small class="text-muted">@progresodata.Pagina / @libro.paginas</small>
+                                            </div>
+                                            <div class="progress rounded-pill" style="height: 8px; background-color: #e9ecef;">
+                                                <div class="progress-bar rounded-pill" role="progressbar"
+                                                     style="width: @progressbar%; background-color: #56425D;"
+                                                     aria-valuenow="@progresodata.Pagina"
+                                                     aria-valuemin="0"
+                                                     aria-valuemax="@libro.paginas">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+
+                            <!-- Botones de acción -->
+                            <div class="card-footer bg-transparent py-3 border-top-0">
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Detalles" asp-controller="Libros" asp-route-id="@libro.Id"
+                                       class="btn btn-sm flex-grow-1 rounded-pill shadow-sm"
+                                       style="background-color: #e9ecef; color: #495057; border: none; transition: all 0.2s ease;">
+                                        <i class="bi bi-eye"></i> Detalles
+                                    </a>
+
+                                    <!-- Dropdown con estilo mejorado -->
+                                    <div class="dropdown flex-grow-1">
+                                        <button class="btn btn-sm rounded-pill shadow-sm w-100 dropdown-toggle
+                                            @(libro.IdLista == 1 ? "btn-primary" :
+                                            libro.IdLista == 2 ? "btn-success" :
+                                            libro.IdLista == 3 ? "btn-warning" :
+                                            libro.IdLista == 4 ? "btn-dark" : "btn-secondary")"
+                                                style="border: none; transition: all 0.2s ease;"
+                                                type="button" id="dropdownMenuButton-@libro.Id"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                            @if (libro.IdLista == 0)
+                                            {
+                                                <span><i class="bi bi-plus-circle me-1"></i>Lista</span>
+                                            }
+                                            else if (libro.IdLista == 1)
+                                            {
+                                                <span><i class="bi bi-book me-1"></i>Leyendo</span>
+                                            }
+                                            else if (libro.IdLista == 2)
+                                            {
+                                                <span><i class="bi bi-check-circle me-1"></i>Leído</span>
+                                            }
+                                            else if (libro.IdLista == 3)
+                                            {
+                                                <span><i class="bi bi-hourglass me-1"></i>Próxima</span>
+                                            }
+                                            else if (libro.IdLista == 4)
+                                            {
+                                                <span><i class="bi bi-x-circle me-1"></i>No terminado</span>
+                                            }
+                                        </button>
+
+                                        <div class="dropdown-menu shadow-sm border-0 rounded-3" aria-labelledby="dropdownMenuButton-@libro.Id">
+                                            <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="1" data-origen="@libro.IdLista">
+                                                <i class="bi bi-book text-primary me-2"></i>Leyendo
+                                            </button>
+                                            <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="2" data-origen="@libro.IdLista">
+                                                <i class="bi bi-check-circle text-success me-2"></i>Leído
+                                            </button>
+                                            <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="3" data-origen="@libro.IdLista">
+                                                <i class="bi bi-hourglass text-warning me-2"></i>Próxima Lectura
+                                            </button>
+                                            <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="4" data-origen="@libro.IdLista">
+                                                <i class="bi bi-x-circle text-dark me-2"></i>No Terminado
+                                            </button>
+                                            <div class="dropdown-divider"></div>
+                                            <button class="dropdown-item mover-libro text-danger" data-idLibro="@libro.Id" data-destino="0" data-origen="@libro.IdLista">
+                                                <i class="bi bi-trash me-2"></i>Eliminar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Botón actualizar progreso -->
+                                @if (progresodata != null && progresodata.idLibro == libro.Id)
+                                {
+                                    <button type="button" class="btn btn-sm rounded-pill w-100 mt-2 shadow-sm"
+                                            style="background-color: #56425D; color: white; border: none; transition: all 0.2s ease;"
+                                            data-bs-toggle="modal" data-bs-target="#progressModal-@libro.Id">
+                                        <i class="bi bi-bookmark-check me-1"></i> Actualizar progreso
+                                    </button>
+
+                                    <!-- Modal de progreso -->
+                                    <div class="modal fade" id="progressModal-@libro.Id" tabindex="-1" aria-labelledby="modalProgresoLecturaLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content rounded-lg shadow">
+                                                <div class="modal-header" style="background-color: #56425D; color: white;">
+                                                    <h5 class="modal-title" id="modalProgresoLecturaLabel">Actualizar Progreso de Lectura</h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="formProgreso-@libro.Id" method="post" action="/Libros/UpdateProgreso">
+                                                        <input type="hidden" id="idProgreso" name="ID" value="@progresodata.ID" />
+                                                        <input type="hidden" id="idlibro" name="idLibro" value="@libro.Id" />
+
+                                                        <div class="mb-3">
+                                                            <label for="pagina" class="form-label">Página actual:</label>
+                                                            <input type="text" id="pagina" name="Pagina" class="form-control rounded-pill" value="@progresodata.Pagina" />
+                                                            <div class="form-text">Total de páginas: @libro.paginas</div>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-end gap-2">
+                                                            <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                                                            <button type="submit" class="btn rounded-pill" style="background-color: #56425D; color: white;">Actualizar</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+<div class="container">
+    <h2 class="text-center mb-4" style="color: #ada9c2;">Próximas Funciones</h2>
+    <div class="row">
+        <!-- Card 1: Club de Lectura -->
+        <div class="col-md-4 mb-4">
+            <div class="card" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <img src="~/images/club.png" class="card-img-top" alt="Club de Lectura" style="border-radius: 8px 8px 0 0;">
+                <div class="card-body">
+                    <h5 class="card-title" style="color: #56425D;">¡Busca tu Club de Lectura!</h5>
+                    <p class="card-text" style="color: #6c757d;">Encuentra tu club de lectura más cercano o únete a uno online para compartir tus lecturas.</p>
+                    <button class="btn btn-primary" style="background-color: #56425D; border: none;" disabled>¡Próximamente!</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Buscador por Etiquetas -->
+        <div class="col-md-4 mb-4">
+            <div class="card" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <img src="~/images/buscador.png" class="card-img-top" alt="Buscador por Etiquetas" style="border-radius: 8px 8px 0 0;">
+                <div class="card-body">
+                    <h5 class="card-title" style="color: #56425D;">Busca por Etiquetas</h5>
+                    <p class="card-text" style="color: #6c757d;">Encuentra libros fácilmente filtrando por etiquetas como género, autor o temática.</p>
+                    <button class="btn btn-primary" style="background-color: #56425D; border: none;" disabled>¡Próximamente!</button>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Más Funciones -->
+        <div class="col-md-4 mb-4">
+            <div class="card" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <img src="~/images/muchomas.jpg" class="card-img-top" alt="Más Funciones" style="border-radius: 8px 8px 0 0;">
+                <div class="card-body">
+                    <h5 class="card-title" style="color: #56425D;">Y mucho más...</h5>
+                    <p class="card-text" style="color: #6c757d;">Explora más funciones que próximamente estarán disponibles para mejorar tu experiencia.</p>
+                    <button class="btn btn-primary" style="background-color: #56425D; border: none;" disabled>¡Próximamente!</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+
+    <!-- Scripts -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".mover-libro").click(function () {
+                var idlibro = $(this).data("idlibro");
+                var destino = $(this).data("destino");
+                var origen = $(this).data("origen");
+
+                $.ajax({
+                    url: '/Libros/MoverLibrosEntreListas',
+                    type: 'POST',
+                    data: { idlibro: idlibro, destino: destino, origen: origen },
+                    success: function (response) {
+                        alert("item movido exitosamente.");
+                        location.reload(); // Recargar la página para actualizar la lista
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error al mover el item: " + xhr.responseText);
+                    }
+                });
+            });
+
+                document.addEventListener("DOMContentLoaded", function () {
+        var progressModal = document.getElementById('progressModal');
+        progressModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var idProgreso = button.getAttribute('data-idprogreso');
+            var idLibro = button.getAttribute('data-idlibro');
+            var pagina = button.getAttribute('data-pagina');
+
+            document.getElementById('idProgreso').value = idProgreso;
+            document.getElementById('idlibro').value = idLibro;
+            document.getElementById('pagina').value = pagina;
+        });
+    });
+
+
+        });
+    </script>

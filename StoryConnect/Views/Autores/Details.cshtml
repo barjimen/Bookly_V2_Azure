@@ -1,0 +1,67 @@
+﻿@model StoryConnect.Models.DetallesAutor
+
+@{
+    ViewData["Title"] = "Detalles del Autor";
+}
+
+
+<div class="container rounded" style="background-color:whitesmoke; padding-top: 2rem!important; padding-bottom:6rem!important">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Html.DisplayFor(model => model.Autores.Nombre)</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <!-- Título de la vista con un color de fondo atractivo -->
+    <div class="text-center mb-4" style="background-color: #56425D; padding: 20px; border-radius: 8px;">
+        <h1 class="text-white" style="font-family: 'Arial', sans-serif; font-size: 36px;">Detalles de @Model.Autores.Nombre</h1>
+
+    </div>
+
+    <!-- Información del autor -->
+    <div class="row mb-5" >
+        <div class="col-md-4">
+            <img src="~/images/autores/@Model.Autores.ImagenPerfil" alt="@Model.Autores.Nombre" class="img-fluid rounded-circle" style="width: 200px; height: 200px; object-fit: cover; border: 5px solid #56425D;">
+        </div>
+        <div class="col-md-8">
+            <h3 style="color: #56425D; font-family: 'Arial', sans-serif; font-size: 28px;">Biografía:</h3>
+            <p style="color: #6c757d; font-family: 'Arial', sans-serif; font-size: 18px;">@Model.Autores.Biografia</p>
+        </div>
+    </div>
+
+    <!-- Libros del autor -->
+    <div>
+        <h2 style="color: #56425D; font-family: 'Arial', sans-serif; font-size: 32px; font-weight: bold;">Libros de @Model.Autores.Nombre</h2>
+        <div class="row">
+            @foreach (var libro in Model.Libros)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card" style="border-radius: 15px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease;">
+                        <img src="~/images/books/@libro.ImagenPortada" class="card-img-top" alt="@libro.Titulo" style="border-radius: 15px 15px 0 0; height: 300px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title" style="color: #56425D; font-size: 20px; font-family: 'Arial', sans-serif;">@libro.Titulo</h5>
+                            <a asp-action="Detalles" asp-controller="Libros" asp-route-id="@libro.Id" class="btn btn-info" style="background-color: #56425D; border: none; transition: background-color 0.3s ease;">
+                                Ver libro
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hover effect para las tarjetas */
+    .card:hover {
+        transform: scale(1.05);
+    }
+    /* Hover effect para el botón */
+    .btn-info:hover {
+        background-color: #3b2a45;
+    }
+</style>

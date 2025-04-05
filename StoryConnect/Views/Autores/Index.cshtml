@@ -1,0 +1,38 @@
+﻿@model IEnumerable<StoryConnect.Models.Autores>
+
+@{
+    ViewData["Title"] = "Todos los Autores";
+}
+
+<style>
+    /* Hover effect para las tarjetas */
+    .card:hover {
+        transform: scale(1.05);
+    }
+    /* Hover effect para el botón */
+    .btn-info:hover {
+        background-color: #3b2a45;
+    }
+</style>
+
+<div class="container rounded" style="background-color:whitesmoke; padding-top: 2rem!important; padding-bottom:6rem!important">
+        <!-- Título de la vista con un color de fondo atractivo -->
+        <div class="text-center mb-4" style="background-color: #56425D; padding: 20px; border-radius: 8px;">
+            <h1 class="text-white" style="font-family: 'Arial', sans-serif; font-size: 36px;">Todos los autores</h1>
+        </div>
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease;">
+                    <img src="~/images/autores/@item.ImagenPerfil" class="card-img-top" alt="Imagen de @item.Nombre" style="border-radius: 8px 8px 0 0; height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: #56425D;">@item.Nombre</h5>
+                        <p class="card-text" style="color: #6c757d;">@item.Biografia</p>
+                        <a asp-controller="Autores" asp-action="Details" asp-route-idautor="@item.Id" class="btn btn-secondary" style="background-color: #56425D; border: none;">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

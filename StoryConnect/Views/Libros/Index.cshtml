@@ -1,0 +1,318 @@
+﻿@model Biblioteca
+@{
+    ViewData["Title"] = "Biblioteca";
+    
+        var usuario = Context.Session.GetString("nombre");
+        var idUsuario = Context.Session.GetInt32("id");
+        var avatar = Context.Session.GetString("imagen_perfil");
+}
+
+<style>
+    
+
+    /* Animaciones y estilos para las tarjetas de libros */
+    .libro-item .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .libro-item .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+    /* Botones más atractivos */
+    .libro-item .btn {
+        transition: all 0.2s ease;
+    }
+
+        .libro-item .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+    
+
+    /* Mejorar aspecto de dropdown */
+    .dropdown-item {
+        padding: 0.5rem 1rem;
+        transition: background-color 0.2s ease;
+    }
+
+        .dropdown-item:active, .dropdown-item:focus {
+            background-color: #f8f9fa;
+            color: inherit;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+
+    /* Calificación con animación */
+    .badge.rounded-circle {
+        transition: transform 0.2s ease;
+        font-size: 16px;
+    }
+
+    .libro-item:hover .badge.rounded-circle {
+        transform: scale(1.1);
+    }
+
+    /* Asegurar que el dropdown sea visible */
+    .dropdown-toggle::after {
+        display: inline-block;
+        margin-left: 0.255em;
+        vertical-align: 0.255em;
+        content: "";
+        border-top: 0.3em solid;
+        border-right: 0.3em solid transparent;
+        border-bottom: 0;
+        border-left: 0.3em solid transparent;
+    }
+
+    /* Fix para Bootstrap 5 si es necesario */
+    .dropdown-menu {
+        display: none;
+    }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+    /* Asegurar que el dropdown tenga suficiente z-index */
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-menu {
+        z-index: 1021;
+        min-width: 100%;
+    }
+</style>
+
+<div class="container-fluid" style="padding-top: 2rem!important; padding-bottom:6rem!important">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#filtroAutores" aria-expanded="false" aria-controls="filtroAutores" style="cursor: pointer;">
+                    <h5 class="mb-0">Filtrar por autor</h5>
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+                <select class="form-select mb-2" id="autorSelect">
+                    <option value="*">Mostrar Todos</option>
+                    @foreach (var autor in Model.Autores)
+                    {
+                        <option value=".autor-@autor.Id">@autor.Nombre</option>
+                    }
+                </select>
+                <select class="form-select mb-2" id="etiquetaSelect">
+                    <option value="*">Mostrar Todos</option>
+                    @foreach (var eti in Model.Etiquetas)
+                    {
+                        <option value=".autor-@eti.Id">@eti.Nombre</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-search"></i></span>
+                <input type="text" class="form-control quicksearch" id="quicksearch" placeholder="Buscar libros...">
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-4 g-3 g-md-4" id="libros-grid">
+        @foreach (var item in Model.Libros)
+        {
+            var autorSlug = item.NombreAutor.Replace(" ", "-").ToLower();
+
+            <div class="col libro-item autor-@item.AutorId mb-4">
+                <div class="card shadow-sm h-100 rounded-lg overflow-hidden border-0" style="transition: all 0.3s ease;">
+                   
+                    <div class="position-relative">
+                        @if (!string.IsNullOrEmpty(item.ImagenPortada))
+                        {
+                            <img src="~/images/books/@item.ImagenPortada" class="card-img-top" alt="@item.Titulo" style="height: 280px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="/images/book-placeholder.jpg" class="card-img-top" alt="@item.Titulo" style="height: 280px; object-fit: cover;">
+                        }
+                        
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <span class="badge rounded-pill p-2" style="background-color: #56425D; width: 75px; height: 50px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 16px;">
+                                <i class="fa fa-star me-1"></i> @item.CalificacionPromedio
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-body p-3">
+                        <h5 class="card-title fw-bold text-truncate mb-1" title="@item.Titulo">@item.Titulo</h5>
+                        <p class="card-text text-muted mb-1 small">
+                            <i class="bi bi-person-fill"></i> @item.NombreAutor
+                        </p>
+                        <p class="card-text text-muted small mb-0">
+                            <i class="bi bi-calendar-event"></i> @item.FechaPublicacion.Year
+                        </p>
+                    </div>
+
+                    <div class="card-footer bg-transparent py-3 border-top-0">
+                        <div class="d-flex gap-2">
+                            <a asp-action="Detalles" asp-controller="Libros" asp-route-id="@item.Id"
+                               class="btn btn-sm flex-grow-1 rounded-pill shadow-sm"
+                               style="background-color: #e9ecef; color: #495057; border: none; transition: all 0.2s ease;">
+                                <i class="bi bi-eye"></i> Detalles
+                            </a>
+                            @if(usuario != null)
+                            {
+                            <div class="dropdown flex-grow-1">
+                                <button class="btn btn-sm rounded-pill shadow-sm w-100 dropdown-toggle
+                                @(item.idLista == 1 ? "btn-primary" :
+                                item.idLista == 2 ? "btn-success" :
+                                item.idLista == 3 ? "btn-warning" :
+                                item.idLista == 4 ? "btn-dark" : "btn-secondary")"
+                                        style="border: none; transition: all 0.2s ease;"
+                                        type="button" id="dropdownMenuButton-@item.Id"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                    @if (item.idLista == 0)
+                                    {
+                                        <span><i class="bi bi-plus-circle me-1"></i>Lista</span>
+                                    }
+                                    else if (item.idLista == 1)
+                                    {
+                                        <span><i class="bi bi-book me-1"></i>Leyendo</span>
+                                    }
+                                    else if (item.idLista == 2)
+                                    {
+                                        <span><i class="bi bi-check-circle me-1"></i>Leído</span>
+                                    }
+                                    else if (item.idLista == 3)
+                                    {
+                                        <span><i class="bi bi-hourglass me-1"></i>Próxima</span>
+                                    }
+                                    else if (item.idLista == 4)
+                                    {
+                                        <span><i class="bi bi-x-circle me-1"></i>No terminado</span>
+                                    }
+                                </button>
+
+                                <div class="dropdown-menu shadow-sm border-0 rounded-3" aria-labelledby="dropdownMenuButton-@item.Id">
+                                    <button class="dropdown-item mover-libro" data-idLibro="@item.Id" data-destino="1" data-origen="@item.idLista">
+                                        <i class="bi bi-book text-primary me-2"></i>Leyendo
+                                    </button>
+                                    <button class="dropdown-item mover-libro" data-idLibro="@item.Id" data-destino="2" data-origen="@item.idLista">
+                                        <i class="bi bi-check-circle text-success me-2"></i>Leído
+                                    </button>
+                                    <button class="dropdown-item mover-libro" data-idLibro="@item.Id" data-destino="3" data-origen="@item.idLista">
+                                        <i class="bi bi-hourglass text-warning me-2"></i>Próxima Lectura
+                                    </button>
+                                    <button class="dropdown-item mover-libro" data-idLibro="@item.Id" data-destino="4" data-origen="@item.idLista">
+                                        <i class="bi bi-x-circle text-dark me-2"></i>No Terminado
+                                    </button>
+                                    <div class="dropdown-divider"></div>
+                                    <button class="dropdown-item mover-libro text-danger" data-idLibro="@item.Id" data-destino="0" data-origen="@item.idLista">
+                                        <i class="bi bi-trash me-2"></i>Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                            }
+                            else
+                            {
+                                <a asp-action="Register" asp-controller="Usuarios"
+                                   class="btn btn-sm flex-grow-1 rounded-pill shadow-sm"
+                                   style="background-color: #56425D; color: white!important; border: none; transition: all 0.2s ease;">
+                                    <i class="bi bi-eye"></i> Añadir a lista
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model == null)
+{
+    <h2>No hay libros</h2>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $(".mover-libro").click(function () {
+            var idlibro = $(this).data("idlibro");
+            var destino = $(this).data("destino");
+            var origen = $(this).data("origen");
+
+            $.ajax({
+                url: '/Libros/MoverLibrosEntreListas',
+                type: 'POST',
+                data: { idlibro: idlibro, destino: destino, origen: origen },
+                success: function (response) {
+                    alert("item movido exitosamente.");
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert("Error al mover el item: " + xhr.responseText);
+                }
+            });
+        });
+
+        var $grid = $('#libros-grid').isotope({
+            itemSelector: '.libro-item',
+            layoutMode: 'fitRows',
+            getSortData: {
+                title: '[data-title]'
+            }
+        });
+
+        var filters = {};
+
+            $('#autorSelect').on('change', function () {
+        var selectedFilter = $(this).val(); // obtiene el valor del <option>
+
+        if (selectedFilter === '*') {
+            delete filters['autor']; // eliminar filtro si es "mostrar todos"
+        } else {
+            filters['autor'] = selectedFilter;
+        }
+
+        var combinedFilter = Object.values(filters).join('');
+        $grid.isotope({ filter: combinedFilter || '*' });
+    });
+
+        var qsRegex;
+        $('#quicksearch').on('keyup', debounce(function () {
+            qsRegex = new RegExp($('#quicksearch').val(), 'gi');
+            $grid.isotope({
+                filter: function () {
+                    var $this = $(this);
+                    var searchResult = qsRegex ? $this.text().match(qsRegex) : true;
+                    var buttonResult = Object.values(filters).length === 0 || $this.is(Object.values(filters).join(''));
+                    return searchResult && buttonResult;
+                }
+            });
+        }, 200));
+
+        function debounce(fn, threshold) {
+            var timeout;
+            return function debounced() {
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+                function delayed() {
+                    fn();
+                    timeout = null;
+                }
+                timeout = setTimeout(delayed, threshold || 100);
+            };
+        }
+    });
+</script>

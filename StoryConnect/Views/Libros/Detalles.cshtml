@@ -1,0 +1,618 @@
+﻿@model LibrosDetalles
+@{
+    ViewData["Title"] = "Detalles";
+    var usuario = Context.Session.GetString("nombre");
+    var idUsuario = Context.Session.GetInt32("id");
+    var avatar = Context.Session.GetString("imagen_perfil");
+}
+
+
+
+<div class="container" style="background-color:whitesmoke; padding-top: 2rem!important; padding-bottom:6rem!important">
+    <!-- Book Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Html.DisplayFor(model => model.Libro.Titulo)</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column: Book Cover -->
+        <div class="col-md-3 mb-4">
+            <div class="text-center">
+                @if (Model.Libro.ImagenPortada != null)
+                {
+                    <img src="~/images/books/@Model.Libro.ImagenPortada" alt="Portada de @Model.Libro.Titulo" class="img-fluid rounded shadow book-cover" />
+                }
+                else
+                {
+                    <div class="border rounded p-5 text-center bg-light book-cover-placeholder">
+                        <i class="bi bi-book" style="font-size: 3rem;"></i>
+                        <p class="mt-2">Sin imagen</p>
+                    </div>
+                }
+
+                @if(usuario != null)
+                {
+                <div class="btn-group dropright mt-3">
+                    <button class="btn dropdown-toggle
+                                        @(Model.ListaLibro == 1 ? "btn-primary" :
+                                          Model.ListaLibro == 2 ? "btn-success" :
+                                          Model.ListaLibro == 3 ? "btn-warning" :
+                                          Model.ListaLibro == 4 ? "btn-dark" : "btn-secondary")"
+                            type="button" id="dropdownMenuButton-@Model.ListaLibro"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                        @if (Model.ListaLibro == 0)
+                        {
+                            <span>Añadir a lista</span>
+                        }
+                        else if (Model.ListaLibro == 1)
+                        {
+                            <span>Leyendo</span>
+                        }
+                        else if (Model.ListaLibro == 2)
+                        {
+                            <span>Leído</span>
+                        }
+                        else if (Model.ListaLibro == 3)
+                        {
+                            <span>Próxima Lectura</span>
+                        }
+                        else if (Model.ListaLibro == 4)
+                        {
+                            <span>No terminado</span>
+                        }
+                    </button>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-@Model.Libro.Id">
+                        <button class="dropdown-item dropdown-libro mover-libro" data-idLibro="@Model.Libro.Id" data-destino="1" data-origen="@Model.ListaLibro">Leyendo</button>
+                        <button class="dropdown-item dropdown-libro mover-libro" data-idLibro="@Model.Libro.Id" data-destino="2" data-origen="@Model.ListaLibro">Leído</button>
+                        <button class="dropdown-item dropdown-libro mover-libro" data-idLibro="@Model.Libro.Id" data-destino="3" data-origen="@Model.ListaLibro">Próxima Lectura</button>
+                        <button class="dropdown-item dropdown-libro mover-libro" data-idLibro="@Model.Libro.Id" data-destino="4" data-origen="@Model.ListaLibro">No Terminado</button>
+                        <button class="dropdown-item dropdown-libro mover-libro" data-idLibro="@Model.Libro.Id" data-destino="0" data-origen="@Model.ListaLibro">Eliminar</button>
+                    </div>
+                </div>
+                }
+                else
+                {
+                <a asp-action="Register" asp-controller="Usuarios"
+                   class="btn btn-sm flex-grow-1 rounded-pill shadow-sm"
+                   style="background-color: #56425D; color: white!important; border: none; transition: all 0.2s ease;">
+                     Añadir a lista
+                </a>
+                }
+                <div class="mt-3 text-start small" style="color:dimgrey">
+                    <div class="text-muted mb-1">Edición:</div>
+                    <div>Pasta blanda, @Html.DisplayFor(model => model.Libro.NumeroPaginas) páginas</div>
+                    <div>Publicado: @Model.Libro.FechaPublicacion.ToShortDateString()</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Book Details -->
+        <div class="col-md-9">
+            <div class="mb-3">
+                <h1 class="book-title mb-1">@Html.DisplayFor(model => model.Libro.Titulo)</h1>
+                <h4 class="text-muted author-name">por <a asp-action="Details" asp-controller="Autores" asp-route-idautor="@Model.Libro.AutorId" class="text-decoration-none">@Html.DisplayFor(model => model.Libro.NombreAutor)</a></h4>
+
+                @if (!string.IsNullOrEmpty(Model.Libro.Saga))
+                {
+                    <div class="mb-2 text-muted">
+                        <span class="badge bg-light text-dark border">@Html.DisplayFor(model => model.Libro.Saga) #@Html.DisplayFor(model => model.Libro.PosicionSaga)</span>
+                    </div>
+                }
+            </div>
+
+            <!-- Ratings Display -->
+            <div class="mb-4 rating-section">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <span class="display-6 fw-bold" style="color:black">@Model.Libro.CalificacionPromedio.ToString("0.00")</span>
+                    </div>
+                    <div class="review-rating">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Math.Floor(Model.Libro.CalificacionPromedio))
+                            {
+                                <i class="fa fa-star filled"></i> <!-- Full star -->
+                            }
+                            else if (i == Math.Ceiling(Model.Libro.CalificacionPromedio) && Model.Libro.CalificacionPromedio % 1 != 0)
+                            {
+                                <i class="fa fa-star-half-alt filled"></i> <!-- Half star -->
+                            }
+                            else
+                            {
+                                <i class="fa fa-star empty"></i> <!-- Empty star -->
+                            }
+                        }
+                    </div>
+
+                    <div class="ms-auto">
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-star me-1"></i>Calificar este libro
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tags Section (NEW) -->
+            <div class="mb-4 tags-section">
+                <h4>Etiquetas</h4>
+                <div class="etiquetas-container">
+                    @if (Model.Etiquetas != null && Model.Etiquetas.Any())
+                    {
+                        @foreach (var etiqueta in Model.Etiquetas)
+                        {
+                            <button class="badge bg-primary text-decoration-none me-2 mb-2 py-2 px-3">
+                                @etiqueta.Nombre
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted fst-italic">No hay etiquetas para este libro.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Synopsis Section -->
+            <div class="mb-4 sinopsis-section">
+                <h4>Sinopsis</h4>
+                <p>@Html.DisplayFor(model => model.Libro.Sinopsis)</p>
+            </div>
+
+            <!-- Book Metadata -->
+            <div class="mb-4 metadata-section">
+                <h4>Información del libro</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="text-muted">Título:</th>
+                                    <td>@Html.DisplayFor(model => model.Libro.Titulo)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-muted">Autor:</th>
+                                    <td>@Html.DisplayFor(model => model.Libro.NombreAutor)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-muted">Páginas:</th>
+                                    <td>@Html.DisplayFor(model => model.Libro.NumeroPaginas)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-sm">
+                            <tbody>
+                                @if (!string.IsNullOrEmpty(Model.Libro.Saga))
+                                {
+                                    <tr>
+                                        <th scope="row" class="text-muted">Saga:</th>
+                                        <td>@Html.DisplayFor(model => model.Libro.Saga)</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-muted">Posición:</th>
+                                        <td>@Html.DisplayFor(model => model.Libro.PosicionSaga)</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <th scope="row" class="text-muted">Fecha Publicación:</th>
+                                    <td>@Model.Libro.FechaPublicacion.ToString("yyyy-MM-dd")</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="reviews-container">
+        @if(idUsuario != null)
+        {
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Añadir una reseña
+            </button>
+        }
+
+        <!-- Modal para Añadir Reseña -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Añadir Reseña</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="formReseña" method="post" action="/Libros/InsertReseña">
+                        <div class="modal-body">
+                            <label for="reseñaTexto">Reseña: </label>
+                            <div class="mb-3">
+                                <label class="form-label">Calificación</label>
+                                <select id="calificacion" class="form-control" name="calificacion">
+                                    <option value="1">1 ⭐</option>
+                                    <option value="2">2 ⭐⭐</option>
+                                    <option value="3">3 ⭐⭐⭐</option>
+                                    <option value="4">4 ⭐⭐⭐⭐</option>
+                                    <option value="5">5 ⭐⭐⭐⭐⭐</option>
+                                </select>
+                            </div>
+                            <input type="text" class="form-control" id="texto" name="texto" placeholder="Escribe una reseña...." required />
+                            <input type="hidden" id="idLibro" name="idLibro" value="@Model.Libro.Id" />
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar reseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+        @foreach (var review in Model.Resenas)
+        {
+            <div class="review-card" style="background-color: #ededed">
+                <div class="review-header">
+                    <div class="review-id">
+                        <span class="label">Review</span>
+                    </div>
+                    <div class="review-date">
+                        <i class="fa fa-calendar"></i>
+                        <span>@review.fecha.ToString()</span>
+                    </div>
+                </div>
+
+                <div class="review-user">
+                    <div class="user-avatar">
+                        <i class="fa fa-user-circle"></i>
+                    </div>
+                    <div class="user-id" style="color:dimgrey">User @review.Usuario.Nombre</div>
+                </div>
+
+                <div class="review-rating">
+                    @for (int i = 1; i <= review.calificacion; i++)
+                    {
+                            <i class="fa fa-star"></i>
+                        
+                    }
+                    <span class="points">@review.calificacion</span> / 5
+                </div>
+
+                <div class="review-text">
+                    <p>@review.texto</p>
+                </div>
+                @if(idUsuario == review.UsuarioId)
+                {
+                    <button class="btn btn-primary editar-resena"
+                            data-idresena="@review.Id"
+                            data-usuario="@review.Usuario.Nombre"
+                            data-calificacion="@review.calificacion"
+                            data-texto="@review.texto"
+                            data-idLibro="@review.idLibro">
+                        
+                        
+                        <i class="fa fa-edit"></i> Editar
+                    </button>
+                    
+                }
+
+            </div>
+        }
+        <!--El modal para editar reseña-->
+        <div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarLabel">Editar Reseña</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formReseña" method="post" action="/Libros/ActualizarReseña">
+                            <div class="mb-3">
+                                <input type="hidden" id="idResena" name="Id" />
+                                <input type="hidden" id="idLibro" name="idLibro" value="@Model.Libro.Id" />
+                                <label class="form-label">Usuario</label>
+                                <input type="text" id="usuario" class="form-control" disabled />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Calificación</label>
+                                <select id="calificacion" class="form-control" name="calificacion">
+                                    <option value="1">1 ⭐</option>
+                                    <option value="2">2 ⭐⭐</option>
+                                    <option value="3">3 ⭐⭐⭐</option>
+                                    <option value="4">4 ⭐⭐⭐⭐</option>
+                                    <option value="5">5 ⭐⭐⭐⭐⭐</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Texto de la reseña</label>
+                                <textarea id="texto" class="form-control" name="texto"></textarea>
+                            </div>
+
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" id="actualizarReseña">Guardar cambios</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons at the bottom -->
+        <div class="mt-4 mb-4 d-flex">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Add this to your site.css or in a style tag -->
+<style>
+    .modal-content{
+        color: dimgrey;
+        background-color: #ededed;
+    }
+
+    h1,h2,h3,h4{
+        color: #56425d;
+    }
+
+    .book-cover {
+        width: 100%;
+        max-width: 250px; /* Aumenta el tamaño de la imagen */
+        height: auto;
+    }
+
+    .book-cover-placeholder {
+        width: 100%;
+        max-width: 250px;
+        height: 350px; /* Ajusta la altura para que coincida con la imagen */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+
+    .book-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .author-name {
+        font-size: 1.2rem;
+        font-weight: 400;
+    }
+
+    /* Star Rating CSS */
+    .stars-outer {
+        position: relative;
+        display: inline-block;
+        font-size: 1.5rem;
+    }
+
+        .stars-outer::before {
+            content: "\2606 \2606 \2606 \2606 \2606";
+            color: #ccc;
+        }
+
+    .stars-inner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 0;
+    }
+
+        .stars-inner::before {
+            content: "\2605 \2605 \2605 \2605 \2605";
+            color: #f8ce0b;
+        }
+
+    .sinopsis-section {
+        background-color: #f9f9f9;
+        color:dimgrey;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid #3c763d;
+    }
+
+    .metadata-section {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    /* Tags Section Styling */
+    .tags-section {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid #007bff;
+    }
+
+    .etiquetas-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    /* Contenedor de reseñas */
+    .reviews-container {
+        margin-top: 3rem;
+        padding: 1.5rem;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        /* Título de reseñas */
+        .reviews-container h2 {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Botón de añadir reseña */
+        .reviews-container .btn {
+            margin-bottom: 1.5rem;
+        }
+
+    /* Tarjeta de reseña */
+    .review-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        /* Hover para la tarjeta de reseña */
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+    /* Encabezado de la reseña (ID y fecha) */
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    /* Estilos para el ID y la fecha de la reseña */
+    .review-id .label {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .review-user {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .user-avatar {
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        padding: 0.5rem;
+        margin-right: 0.75rem;
+        font-size: 1.5rem;
+    }
+
+    .user-id {
+        font-weight: bold;
+    }
+
+    /* Estilos para las estrellas de calificación */
+    .review-rating {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+        .review-rating i {
+            color: #f5a623;
+            margin-right: 3px;
+        }
+
+        .review-rating .points {
+            margin-left: 10px;
+            color: #555;
+            font-weight: bold;
+        }
+
+    /* Estilos para el texto de la reseña */
+    .review-text p {
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #444;
+    }
+
+    /* Botón de editar reseña */
+    .editar-resena {
+        margin-top: 1rem;
+        display: block;
+        width: 100%;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 1rem;
+        transition: background-color 0.2s ease;
+    }
+
+        .editar-resena:hover {
+            background-color: #0056b3;
+        }
+
+    /* Estilos del modal de añadir y editar reseña */
+    .modal-dialog {
+        max-width: 500px;
+    }
+
+    .modal-content {
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .modal-header {
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .modal-footer {
+        border-top: 2px solid #f0f0f0;
+    }
+
+    .modal-title {
+        font-weight: bold;
+    }
+
+    /* Estilo para el input y textarea del formulario */
+    .form-control {
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+    }
+
+    /* Estilos para las opciones de calificación en el modal */
+    select.form-control {
+        cursor: pointer;
+    }
+</style>
+
+<!-- Add Bootstrap Icons to your _Layout.cshtml or here -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<!-- CDN de SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/Modal.js"></script>
+   

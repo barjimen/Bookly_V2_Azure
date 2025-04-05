@@ -1,0 +1,82 @@
+﻿@model Biblioteca
+
+<h1 class="mb-4">📚 Géneros</h1>
+
+<div class="row">
+    <!-- Lateral: Lista de géneros -->
+    <div class="col-md-3">
+        <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action active" data-filter="*">Todos los géneros</a>
+            @foreach (var genero in Model.Etiquetas)
+            {
+                <a href="#" class="list-group-item list-group-item-action" data-filter=".genero-@genero.Id">@genero.Nombre</a>
+            }
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="col-md-9">
+        <div class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-search"></i></span>
+                <input type="text" class="form-control" id="quicksearch" placeholder="Buscar por título o autor...">
+            </div>
+        </div>
+
+        <div class="row" id="libros-grid">
+            @foreach (var libro in Model.Libros)
+            {
+                <div class="col-md-4 mb-4 libro-item genero-@libro.Id" data-title="@libro.Titulo">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@libro.Titulo</h5>
+                            <p class="card-text"><strong>Autor:</strong> @libro.NombreAutor</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Isotope y filtros -->
+<script>
+    var $grid = $('#libros-grid').isotope({
+        itemSelector: '.libro-item',
+        layoutMode: 'fitRows',
+        getSortData: {
+            title: '[data-title]'
+        }
+    });
+
+    // Filtro por género (desde lista lateral)
+    $('.list-group-item').click(function (e) {
+        e.preventDefault();
+        $('.list-group-item').removeClass('active');
+        $(this).addClass('active');
+
+        var filterValue = $(this).attr('data-filter');
+        $grid.isotope({ filter: filterValue });
+    });
+
+    // Búsqueda rápida
+    var qsRegex;
+    $('#quicksearch').on('keyup', debounce(function () {
+        qsRegex = new RegExp($('#quicksearch').val(), 'gi');
+        $grid.isotope({
+            filter: function () {
+                var $this = $(this);
+                var searchMatch = qsRegex ? $this.text().match(qsRegex) : true;
+                return searchMatch;
+            }
+        });
+    }, 200));
+
+    function debounce(fn, threshold) {
+        var timeout;
+        return function debounced() {
+            clearTimeout(timeout);
+            timeout = setTimeout(fn, threshold || 100);
+        };
+    }
+</script>
