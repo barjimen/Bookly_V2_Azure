@@ -1,4 +1,4 @@
-﻿@model Biblioteca
+﻿@model Etiquetas
 
 <h1 class="mb-4">📚 Géneros</h1>
 
@@ -7,10 +7,10 @@
     <div class="col-md-3">
         <div class="list-group">
             <a href="#" class="list-group-item list-group-item-action active" data-filter="*">Todos los géneros</a>
-            @foreach (var genero in Model.Etiquetas)
-            {
-                <a href="#" class="list-group-item list-group-item-action" data-filter=".genero-@genero.Id">@genero.Nombre</a>
-            }
+            @* @foreach (var genero in Model) *@
+            @* { *@
+            @*     <a href="#" class="list-group-item list-group-item-action" data-filter=".genero-@genero.Id">@genero.Nombre</a> *@
+            @* } *@
         </div>
     </div>
 
@@ -21,20 +21,6 @@
                 <span class="input-group-text"><i class="fa fa-search"></i></span>
                 <input type="text" class="form-control" id="quicksearch" placeholder="Buscar por título o autor...">
             </div>
-        </div>
-
-        <div class="row" id="libros-grid">
-            @foreach (var libro in Model.Libros)
-            {
-                <div class="col-md-4 mb-4 libro-item genero-@libro.Id" data-title="@libro.Titulo">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">@libro.Titulo</h5>
-                            <p class="card-text"><strong>Autor:</strong> @libro.NombreAutor</p>
-                        </div>
-                    </div>
-                </div>
-            }
         </div>
     </div>
 </div>

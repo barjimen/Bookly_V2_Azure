@@ -168,20 +168,12 @@ namespace StoryConnect.Controllers
             int? idUsuario = HttpContext.Session.GetInt32("id");
 
             var etiquetas = await this.repo.GetEtiquetas();
-            var libros = await this.repo.GetLibrosAsync(idUsuario);
-
-            var lib = new Biblioteca
-            {
-                Libros = libros,
-                Etiquetas = etiquetas
-            };
-            return View(lib);
+            return View(etiquetas);
         }
 
-        public async Task<IActionResult> GeneroById(int idEtiqueta)
-        {
+        //public async Task<IActionResult> DetallesGenero(int? idEtiqueta)
+        //{
 
-        }
-
+        //}
     }
 }

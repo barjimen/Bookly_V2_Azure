@@ -38,5 +38,6 @@ namespace StoryConnect.Repositories
         Task DeleteProgreso(int idProgreso, int idUsuario);
         Task<int?> FindProgreso(int idUsuario, int idLibro);
         Task<ProgresoLectura> UpdateProgreso(int idProgreso, int idUsuario, int pagina);
+        Task<List<Libros>> FiltrarPorEtiquetas(int idEtiqueta);
     }
 }

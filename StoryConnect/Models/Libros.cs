@@ -30,7 +30,7 @@ namespace StoryConnect.Models
         public int AutorId { get; set; }
         [Column("NombreAutor")]
         public string NombreAutor { get; set; }
-        [Column("EtiquetaId")]
-        public int? EtiquetaId { get; set; }
+        [Column("EtiquetaIds")]
+        public string? EtiquetaIds { get; set; }
     }
 }
