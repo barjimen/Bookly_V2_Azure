@@ -66,7 +66,11 @@ namespace StoryConnect.Repositories
                                idLista = ul != null ? ul.ListaPredefinidaId : 0,
                                EtiquetaId = l.EtiquetaId
                            };
-            return await consulta.AsNoTracking().ToListAsync();
+            return consulta
+                   .AsNoTracking()
+                   .AsEnumerable()
+                   .DistinctBy(l => l.Id)
+                   .ToList();
         }
 
 

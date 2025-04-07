@@ -1,28 +1,39 @@
-﻿@model Etiquetas
+﻿@using StoryConnect_V2.Models
+@model List<Generos>
+<style>
+    .overflow-auto::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .overflow-auto::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.2);
+        border-radius: 4px;
+    }
+
+    .overflow-auto::-webkit-scrollbar-track {
+        background: transparent;
+    }
+</style>
 
 <h1 class="mb-4">📚 Géneros</h1>
+<div>
+    @foreach (var genero in Model)
+    {
+        <div class="mb-5">
+            <h3 class="mb-3">@genero.Genero.Nombre</h3>
 
-<div class="row">
-    <!-- Lateral: Lista de géneros -->
-    <div class="col-md-3">
-        <div class="list-group">
-            <a href="#" class="list-group-item list-group-item-action active" data-filter="*">Todos los géneros</a>
-            @* @foreach (var genero in Model) *@
-            @* { *@
-            @*     <a href="#" class="list-group-item list-group-item-action" data-filter=".genero-@genero.Id">@genero.Nombre</a> *@
-            @* } *@
-        </div>
-    </div>
-
-    <!-- Contenido principal -->
-    <div class="col-md-9">
-        <div class="mb-3">
-            <div class="input-group">
-                <span class="input-group-text"><i class="fa fa-search"></i></span>
-                <input type="text" class="form-control" id="quicksearch" placeholder="Buscar por título o autor...">
+            <div class="d-flex overflow-auto gap-3 pb-2" style="scroll-snap-type: x mandatory;">
+                @foreach (var libro in genero.Libros.Take(3))
+                {
+                    <div class="text-center" style="min-width: 140px; scroll-snap-align: start;">
+                        <img src="~/images/books/@libro.ImagenPortada" alt="@libro.Titulo" class="img-fluid rounded shadow-sm mb-2" style="height: 200px; object-fit: cover;" />
+                    </div>
+                }
+                <a asp-action="" asp-controller="" asp-route-id="@genero.Genero.Id">Ver más sobre @genero.Genero.Nombre</a>
             </div>
+            <hr />
         </div>
-    </div>
+    }
 </div>
 
 <!-- Isotope y filtros -->

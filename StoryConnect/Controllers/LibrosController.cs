@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StoryConnect.Models;
 using StoryConnect.Repositories;
+using StoryConnect_V2.Models;
 
 namespace StoryConnect.Controllers
 {
@@ -168,12 +169,25 @@ namespace StoryConnect.Controllers
             int? idUsuario = HttpContext.Session.GetInt32("id");
 
             var etiquetas = await this.repo.GetEtiquetas();
-            return View(etiquetas);
+            List<LibrosDTO> libros = await this.repo.GetLibrosAsync(idUsuario);
+            var generosConLibros = etiquetas.Select(e => new Generos
+            {
+                Genero = e,
+                Libros = libros.Where(l => l.EtiquetaId == e.Id).ToList()
+            }).Where(x => x.Libros.Any()).ToList();
+
+            var random = new Random();
+            var generarAleatorios = generosConLibros.OrderBy(x => random.Next()).Take(3).ToList();
+
+            return View(generarAleatorios);
         }
 
-        //public async Task<IActionResult> DetallesGenero(int? idEtiqueta)
-        //{
+        public async Task<IActionResult> Generos(int idGenero)
+        {
+            int? idUsuario = HttpContext.Session.GetInt32("id");
 
-        //}
+            List<Libros> libros = await this.repo.FiltrarPorEtiquetas(idGenero);
+            return View(libros);
+        }
     }
 }
