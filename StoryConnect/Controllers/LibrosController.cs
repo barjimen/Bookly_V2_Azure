@@ -182,11 +182,11 @@ namespace StoryConnect.Controllers
             return View(generarAleatorios);
         }
 
-        public async Task<IActionResult> Generos(int idGenero)
+        public async Task<IActionResult> Genero(int id)
         {
             int? idUsuario = HttpContext.Session.GetInt32("id");
 
-            List<Libros> libros = await this.repo.FiltrarPorEtiquetas(idGenero);
+            List<Libros> libros = await this.repo.FiltrarPorEtiquetas(id);
             return View(libros);
         }
     }

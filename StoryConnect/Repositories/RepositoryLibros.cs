@@ -379,8 +379,14 @@ namespace StoryConnect.Repositories
             var consulta = from datos in context.LibrosEtiquetas
                            where datos.EtiquetaId == idEtiqueta
                            select datos;
+
             var librosIds = consulta.Select(x => x.LibroId).ToList();
-            return await this.context.Libros.Where(x => librosIds.Contains(x.Id)).ToListAsync();
+
+            return this.context.Libros
+                .Where(x => librosIds.Contains(x.Id))
+                .AsEnumerable()
+                .DistinctBy(x => x.Id)
+                .ToList();
         }
 
 

@@ -29,7 +29,7 @@
                         <img src="~/images/books/@libro.ImagenPortada" alt="@libro.Titulo" class="img-fluid rounded shadow-sm mb-2" style="height: 200px; object-fit: cover;" />
                     </div>
                 }
-                <a asp-action="" asp-controller="" asp-route-id="@genero.Genero.Id">Ver más sobre @genero.Genero.Nombre</a>
+                <a asp-action="Genero" asp-controller="Libros" asp-route-id="@genero.Genero.Id">Ver más sobre @genero.Genero.Nombre</a>
             </div>
             <hr />
         </div>
