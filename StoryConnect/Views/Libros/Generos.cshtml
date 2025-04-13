@@ -28,7 +28,9 @@
                     @foreach (var libro in genero.Libros.Take(5))
                     {
                         <div class="text-center" style="min-width: 140px; scroll-snap-align: start;">
-                            <img src="~/images/books/@libro.ImagenPortada" alt="@libro.Titulo" class="img-fluid rounded shadow-sm mb-2" style="height: 200px; object-fit: cover;" />
+							<a asp-action="Detalles" asp-controller="Libros" asp-route-id="@libro.Id" class="text-decoration-none">
+                                <img src="~/images/books/@libro.ImagenPortada" alt="@libro.Titulo" class="img-fluid rounded shadow-sm mb-2" style="height: 200px; object-fit: cover;" />
+                            </a>
                         </div>
                     }
                 </div>

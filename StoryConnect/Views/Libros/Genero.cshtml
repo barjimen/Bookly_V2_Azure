@@ -1,15 +1,18 @@
 ﻿@model List<Libros>
 
-<h1>Detalles del genero</h1>
-<div class="mb-5">
+<h1 class="mb-4">📖 Libros del género</h1>
 
-    <div class="d-flex overflow-auto gap-3 pb-2" style="scroll-snap-type: x mandatory;">
-        @foreach (var libro in Model)
-        {
-            <div class="text-center" style="min-width: 140px; scroll-snap-align: start;">
-                <img src="~/images/books/@libro.ImagenPortada" alt="@libro.Titulo" class="img-fluid rounded shadow-sm mb-2" style="height: 200px; object-fit: cover;" />
-            </div>
-        }
-    </div>
-    <hr />
+<div class="d-flex gap-3 pb-2" style="flex-wrap: wrap; justify-content: space-around">
+    @foreach (var libro in Model)
+    {
+        <div class="text-center" style="min-width: 200px;">
+            <a asp-action="Details" asp-controller="Libros" asp-route-id="@libro.Id">
+                <img src="~/images/books/@libro.ImagenPortada"
+                     alt="@libro.Titulo"
+                     class="img-fluid rounded shadow-sm mb-2"
+                     style="height: 200px; object-fit: cover;" />
+            </a>
+        </div>
+    }
 </div>
+<hr />

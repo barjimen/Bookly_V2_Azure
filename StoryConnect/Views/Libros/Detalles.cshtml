@@ -150,9 +150,9 @@
                     {
                         @foreach (var etiqueta in Model.Etiquetas)
                         {
-                            <button class="badge bg-primary text-decoration-none me-2 mb-2 py-2 px-3">
-                                @etiqueta.Nombre
-                            </button>
+							<a asp-action="Genero" asp-controller="Libros" asp-route-id="@etiqueta.Id" class="badge bg-primary me-1 mb-1">
+								@etiqueta.Nombre
+							</a>
                         }
                     }
                     else
