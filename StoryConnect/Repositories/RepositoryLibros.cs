@@ -388,7 +388,29 @@ namespace StoryConnect.Repositories
                 .ToList();
         }
 
+        public async Task<Usuarios> UpdateUsuarios(Usuarios usuarios)
+        {
+            var usuarioExistente = await this.context.Usuarios.FindAsync(usuarios.Id);
 
+            if (usuarioExistente != null)
+            { 
+                usuarioExistente.Nombre = usuarios.Nombre;
+                usuarioExistente.email = usuarios.email;
+                usuarioExistente.ImagenPerfil = usuarios.ImagenPerfil;
 
+                if (!string.IsNullOrEmpty(usuarios.Password))
+                {
+                    usuarioExistente.Password = usuarios.Password;
+                }
+
+                this.context.Update(usuarioExistente);
+                await this.context.SaveChangesAsync();
+                return usuarioExistente;
+            }
+            else
+            {
+                throw new Exception("Usuario no encontrado.");
+            }
+        }
     }
 }

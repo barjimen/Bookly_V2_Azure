@@ -5,14 +5,21 @@ using StoryConnect.Models;
 using System.Security.Cryptography;
 using StoryConnect.Context;
 using StoryConnect.Repositories;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using StoryConnect.Helper;
+using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.Extensions.Hosting;
 
 namespace StoryConnect.Controllers
 {
     public class UsuariosController : Controller
     {
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private IRepositoryLibros repo;
-        public UsuariosController(IRepositoryLibros repo)
+        public UsuariosController(IRepositoryLibros repo, IWebHostEnvironment hostingEnvironment)
         {
+            _hostingEnvironment = hostingEnvironment;
             this.repo = repo;
         }
         public IActionResult Register()
@@ -154,5 +161,20 @@ namespace StoryConnect.Controllers
             await this.repo.UpdateObjetivo(objetivos.idObjetivo, idusuario, objetivos.ProgresoActual);
             return RedirectToAction("MisObjetivos", new { id = objetivos.IdUsuario });
         }
+
+        public async Task<IActionResult>UpdateUsuario()
+        {
+            int idUser = (int)HttpContext.Session.GetInt32("id");
+            var usuario = await this.repo.GetUsuario(idUser);
+            return View(usuario);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUsuario(Usuarios usuario, IFormFile ProfileImageFile)
+        {
+            await this.repo.UpdateUsuarios(usuario);
+            return View(usuario);
+        }
     }
+
 }

@@ -328,15 +328,14 @@
                         <div class="joined-tag">
                             @{
                                 var diasRegistrado = (DateTime.Now - Model.Usuarios.FechaRegistro).Days;
-
                             }
                             <i class="fas fa-calendar-alt me-2"></i> Miembro desde hace @diasRegistrado días.
                         </div>
                     </div>
                 </div>
-                <button class="edit-btn ms-auto">
-                    <i class="fas fa-pencil-alt me-2"></i> Edit Profile
-                </button>
+                <a asp-action="UpdateUsuario" asp-controller="Usuarios" class="edit-btn ms-auto">
+                    Editar perfil
+                </a>
             </div>
             <div class="profile-stats">
                 <div class="stat-item">

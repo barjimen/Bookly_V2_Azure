@@ -39,5 +39,6 @@ namespace StoryConnect.Repositories
         Task<int?> FindProgreso(int idUsuario, int idLibro);
         Task<ProgresoLectura> UpdateProgreso(int idProgreso, int idUsuario, int pagina);
         Task<List<Libros>> FiltrarPorEtiquetas(int idEtiqueta);
+        Task<Usuarios> UpdateUsuarios(Usuarios usuarios);
     }
 }

@@ -1,0 +1,139 @@
+﻿@model StoryConnect.Models.Usuarios
+@{
+    ViewData["Title"] = "Editar Perfil";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            @if (ViewData["MENSAJE"] != null)
+            {
+                <div class="alert alert-warning">
+                    @ViewData["MENSAJE"]
+                </div>
+            }
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Editar Perfil</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-controller="Usuarios" asp-action="UpdateUsuario" method="post">
+
+                        <!-- Campo oculto para el ID -->
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <!-- Datos personales -->
+                                <div class="mb-3">
+                                    <label asp-for="Nombre" class="form-label fw-bold">Nombre completo</label>
+                                    <input asp-for="Nombre" class="form-control" required />
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="email" class="form-label fw-bold">Correo electrónico</label>
+                                    <input asp-for="email" class="form-control" type="email" required />
+                                    <span asp-validation-for="email" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Password" class="form-label fw-bold">Contraseña</label>
+                                    <input asp-for="Password" class="form-control" type="password" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                    <div class="form-text">Deja en blanco para mantener tu contraseña actual</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="ConfirmPassword" class="form-label fw-bold">Confirmar Contraseña</label>
+                                    <input name="ConfirmPassword" id="ConfirmPassword" class="form-control" type="password" />
+                                    <span id="passwordMatchError" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <!-- Imagen de perfil -->
+                                <div class="text-center mb-3">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Imagen actual</label>
+                                        <div class="profile-image-container">
+                                            <img id="currentProfileImage" src="@(String.IsNullOrEmpty(Model.ImagenPerfil) ? "/images/default-profile.png" : Model.ImagenPerfil)"
+                                                 class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" alt="Imagen de perfil" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Guarda la ruta de la imagen actual -->
+                                    <input type="hidden" asp-for="ImagenPerfil" />
+
+                                    <div class="mb-3">
+                                        <label for="ProfileImageFile" class="form-label fw-bold">Cambiar imagen</label>
+                                        <input type="file" name="ProfileImageFile" id="ProfileImageFile" class="form-control" accept="image/*" onchange="previewImage(this)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-controller="Usuarios" asp-action="Perfil" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Volver
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="btnSubmit">
+                                <i class="bi bi-save"></i> Guardar cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById('currentProfileImage').src = e.target.result;
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Validación de contraseñas
+        document.getElementById('ConfirmPassword').addEventListener('input', function() {
+            var password = document.getElementById('Password').value;
+            var confirmPassword = this.value;
+            var errorElement = document.getElementById('passwordMatchError');
+
+            if (password && confirmPassword) {
+                if (password !== confirmPassword) {
+                    errorElement.textContent = 'Las contraseñas no coinciden';
+                    document.getElementById('btnSubmit').disabled = true;
+                } else {
+                    errorElement.textContent = '';
+                    document.getElementById('btnSubmit').disabled = false;
+                }
+            } else {
+                errorElement.textContent = '';
+                document.getElementById('btnSubmit').disabled = false;
+            }
+        });
+
+        // Aseguramos que el formulario se envíe correctamente
+        document.querySelector('form').addEventListener('submit', function(e) {
+            var password = document.getElementById('Password').value;
+            var confirmPassword = document.getElementById('ConfirmPassword').value;
+
+            // Verificar que las contraseñas coincidan si ambas están llenas
+            if (password && confirmPassword && password !== confirmPassword) {
+                e.preventDefault();
+                document.getElementById('passwordMatchError').textContent = 'Las contraseñas no coinciden';
+                return false;
+            }
+
+            return true;
+        });
+    </script>
