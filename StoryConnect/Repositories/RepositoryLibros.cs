@@ -276,7 +276,6 @@ namespace StoryConnect.Repositories
             SqlParameter pamTexto = new SqlParameter("@texto", texto);
 
             await this.context.Database.ExecuteSqlRawAsync(sql, pamIdUsuario, pamID, pamCali, pamTexto);
-
         }
 
         public async Task InsertObjetivo(int idUsuario, string titulo, DateTime fin, string tipo, int meta)

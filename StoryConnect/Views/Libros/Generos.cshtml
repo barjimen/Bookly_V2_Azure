@@ -1,5 +1,5 @@
 ﻿@using StoryConnect_V2.Models
-@model List<Generos>
+@model GenerosDTO
 <style>
     .overflow-auto::-webkit-scrollbar {
         height: 8px;
@@ -16,24 +16,42 @@
 </style>
 
 <h1 class="mb-4">📚 Géneros</h1>
-<div>
-    @foreach (var genero in Model)
-    {
-        <div class="mb-5">
-            <h3 class="mb-3">@genero.Genero.Nombre</h3>
 
-            <div class="d-flex overflow-auto gap-3 pb-2" style="scroll-snap-type: x mandatory;">
-                @foreach (var libro in genero.Libros.Take(3))
-                {
-                    <div class="text-center" style="min-width: 140px; scroll-snap-align: start;">
-                        <img src="~/images/books/@libro.ImagenPortada" alt="@libro.Titulo" class="img-fluid rounded shadow-sm mb-2" style="height: 200px; object-fit: cover;" />
-                    </div>
-                }
-                <a asp-action="Genero" asp-controller="Libros" asp-route-id="@genero.Genero.Id">Ver más sobre @genero.Genero.Nombre</a>
+<div class="row">
+    <!-- Izquierda: 3 géneros con libros -->
+    <div class="col-md-9">
+        @foreach (var genero in Model.GenerosDestacados)
+        {
+            <div class="mb-5">
+                <h4 class="mb-3 text-uppercase fw-bold">@genero.Genero.Nombre</h4>
+                <div class="d-flex overflow-auto gap-3 pb-2" style="scroll-snap-type: x mandatory;">
+                    @foreach (var libro in genero.Libros.Take(5))
+                    {
+                        <div class="text-center" style="min-width: 140px; scroll-snap-align: start;">
+                            <img src="~/images/books/@libro.ImagenPortada" alt="@libro.Titulo" class="img-fluid rounded shadow-sm mb-2" style="height: 200px; object-fit: cover;" />
+                        </div>
+                    }
+                </div>
+                <a asp-action="Genero" asp-controller="Libros" asp-route-id="@genero.Genero.Id" class="text-decoration-none">Más sobre @genero.Genero.Nombre...</a>
+                <hr />
             </div>
-            <hr />
-        </div>
-    }
+        }
+    </div>
+
+    <!-- Derecha: lista completa de etiquetas -->
+    <div class="col-md-3">
+        <h5 class="fw-bold mb-3">📂 Explorar por género</h5>
+        <ul class="list-unstyled">
+            @foreach (var etiqueta in Model.TodosLosGeneros.OrderBy(e => e.Nombre))
+            {
+                <li class="mb-2">
+                    <a asp-action="Genero" asp-controller="Libros" asp-route-id="@etiqueta.Id" class="text-decoration-none d-block">
+                        @etiqueta.Nombre
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
 </div>
 
 <!-- Isotope y filtros -->
