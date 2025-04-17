@@ -160,8 +160,8 @@ namespace StoryConnect.Controllers
         {
             int idusuario = (int)HttpContext.Session.GetInt32("id");
             int idprogreso = (int)await this.repo.FindProgreso(idusuario, progreso.idLibro);
-
             await this.repo.UpdateProgreso(idprogreso, idusuario, progreso.Pagina);
+
             return RedirectToAction("Home", new { id = progreso.idLibro });
         }
 

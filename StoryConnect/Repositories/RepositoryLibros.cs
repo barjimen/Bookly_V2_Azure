@@ -360,16 +360,26 @@ namespace StoryConnect.Repositories
         public async Task<ProgresoLectura> UpdateProgreso(int idProgreso, int idUsuario, int pagina)
         {
             var progreso = await this.context.ProgresoLecturas.Where(x => x.ID == idProgreso && x.idUsuario == idUsuario).FirstOrDefaultAsync();
+            var libro = await this.FindLibros(progreso.idLibro);
             if (progreso == null)
             {
-                throw new Exception("No se encontró la reseña o no tienes permisos para editarla.");
+                return null;
             }
-            progreso.Pagina = pagina;
-            progreso.Actualizacion = DateTime.Now;
 
-            this.context.ProgresoLecturas.Update(progreso);
-            await this.context.SaveChangesAsync();
-            return progreso;
+            if(progreso.Pagina == libro.NumeroPaginas)
+            {
+                await this.MoverLibrosLista(idUsuario, progreso.idLibro, 1, 2);
+                return progreso;
+            }
+            else
+            {
+                progreso.Pagina = pagina;
+                progreso.Actualizacion = DateTime.Now;
+
+                this.context.ProgresoLecturas.Update(progreso);
+                await this.context.SaveChangesAsync();
+                return progreso;
+            }
         }
 
 
@@ -411,6 +421,12 @@ namespace StoryConnect.Repositories
             {
                 throw new Exception("Usuario no encontrado.");
             }
+        }
+
+        public async Task UpdateLibro(Libros libro)
+        {
+            this.context.Libros.Update(libro);
+            await this.context.SaveChangesAsync();
         }
     }
 }
