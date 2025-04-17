@@ -51,27 +51,6 @@
                                     <span id="passwordMatchError" class="text-danger"></span>
                                 </div>
                             </div>
-
-                            <div class="col-md-4">
-                                <!-- Imagen de perfil -->
-                                <div class="text-center mb-3">
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold">Imagen actual</label>
-                                        <div class="profile-image-container">
-                                            <img id="currentProfileImage" src="@(String.IsNullOrEmpty(Model.ImagenPerfil) ? "/images/default-profile.png" : Model.ImagenPerfil)"
-                                                 class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" alt="Imagen de perfil" />
-                                        </div>
-                                    </div>
-
-                                    <!-- Guarda la ruta de la imagen actual -->
-                                    <input type="hidden" asp-for="ImagenPerfil" />
-
-                                    <div class="mb-3">
-                                        <label for="ProfileImageFile" class="form-label fw-bold">Cambiar imagen</label>
-                                        <input type="file" name="ProfileImageFile" id="ProfileImageFile" class="form-control" accept="image/*" onchange="previewImage(this)" />
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">

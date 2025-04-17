@@ -319,9 +319,27 @@
         <!-- New Header Design -->
         <div class="profile-header">
             <div class="profile-main-info">
-                <div class="profile-avatar">
-                    <img src="~/images/avatar.jpg" alt="Profile" onerror="this.src='https://via.placeholder.com/100x100'" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
+                <form method="post" enctype="multipart/form-data" asp-action="SubirFichero" style="position: relative;">
+                    <div class="profile-avatar" style="position: relative; width: 120px; height: 120px;">
+                        <label for="fotoPerfil" style="cursor: pointer;">
+                            @if (Model.Usuarios.ImagenPerfil == "default.jpg")
+                            {
+                                <img src="~/images/avatar.jpg"/>
+                            }
+                            else
+                            {
+                                <img src="~/Users/@Model.Usuarios.ImagenPerfil" 
+                                style="width: 150px; height: 150px; object-fit: cover;
+                                background-color: #f8f9fa; border-radius: 50%;margin: 20px;
+                                position: relative; z-index: 5;" />
+                            }
+
+                        </label>
+
+                        <!-- Input oculto -->
+                        <input type="file" id="fotoPerfil" name="fichero" accept="image/*" style="display: none;" onchange="this.form.submit();" />
+                    </div>
+                </form>
                 <div>
                     <h2 class="mb-2">@Model.Usuarios.Nombre</h2>
                     <div class="d-flex align-items-center">
@@ -384,7 +402,7 @@
                             conteo = conteoItem.NumLibros;
                         }
 
-                        // Obtenemos los libros para esta lista
+                       // Obtenemos los libros para esta lista
                         var libros = Model.LibrosListasPred
                         .Where(l => l.Id == Model.Usuarios.Id && l.ListaId == listaId)
                         .OrderByDescending(l => l.Agregado_lista)
@@ -398,7 +416,7 @@
                                         data-bs-target="#collapse@(accordionIndex)"
                                         aria-expanded="false"
                                         aria-controls="collapse@(accordionIndex)">
-                                    <i class="fas @icon category-icon" style="color: @color"></i>
+                                    <i class="fas @icon category-icon me-2" style="color: @color"></i>
                                     @listaNombre
                                     <span class="badge-count">@conteo</span>
                                 </button>
@@ -419,7 +437,7 @@
                                         @foreach (var libro in libros)
                                         {
                                             <div class="book-list-item">
-                                                <a href="/Libros/Details/@libro.IdLibro">
+                                                <a href="/Libros/Detalles/@libro.IdLibro">
                                                     <img src="~/images/books/@libro.Portada" alt="@libro.Titulo" class="book-cover-small" />
                                                 </a>
                                                 <div class="book-info">
@@ -446,14 +464,9 @@
         <div class="section-header">
             <h3 class="section-title">
                 <i class="fas fa-chart-line me-2"></i> Mis objetivos @Model.Usuarios.Nombre
-            </h3>
-            
-
-                        
-            @if (Model.ObjetivosUsuarios.Count() > 2)
-            {
-                <a asp-action="MisObjetivos" asp-controller="Usuarios" asp-route-id="@Model.Usuarios.Id" class="btn btn-info">Ver mis objetivos o editarlos</a>
-            }
+            </h3>         
+        <a asp-action="MisObjetivos" asp-controller="Usuarios" asp-route-id="@Model.Usuarios.Id" class="btn btn-info">Ver mis objetivos o editarlos</a>
+           
         </div>
 
         @foreach (var objetivo in Model.ObjetivosUsuarios.Take(2)) // Solo los primeros dos

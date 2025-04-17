@@ -1,4 +1,5 @@
-﻿using StoryConnect.Models;
+﻿using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
+using StoryConnect.Models;
 
 namespace StoryConnect.Repositories
 {
@@ -42,5 +43,8 @@ namespace StoryConnect.Repositories
         Task<Usuarios> UpdateUsuarios(Usuarios usuarios);
 
         Task UpdateLibro(Libros libro);
+
+        Task<string> GetFotoUsuario(int idUsuario);
+        Task<string> UpdateFotoUsuario(int idUsuario, string foto);
     }
 }

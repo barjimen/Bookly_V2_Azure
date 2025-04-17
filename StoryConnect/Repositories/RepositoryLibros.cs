@@ -428,5 +428,53 @@ namespace StoryConnect.Repositories
             this.context.Libros.Update(libro);
             await this.context.SaveChangesAsync();
         }
+
+        public async Task<string> GetFotoUsuario(int idUsuario)
+        {
+            var foto = await this.context.Usuarios
+                .Where(u => u.Id == idUsuario)
+                .Select(u => u.ImagenPerfil)
+                .FirstOrDefaultAsync();
+
+            return foto;
+        }
+
+        public async Task<string> UpdateFotoUsuario(int idUsuario, string foto)
+        {
+            var usuario = await this.context.Usuarios.FindAsync(idUsuario);
+
+            if (usuario == null)
+            {
+                throw new Exception("Usuario no encontrado.");
+            }
+
+            // Extraer nombre de archivo (podrías usar el id + timestamp, por ejemplo)
+            string fileName = $"usuario_{idUsuario}.jpg";
+            string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+
+            if (!Directory.Exists(wwwrootPath))
+            {
+                Directory.CreateDirectory(wwwrootPath);
+            }
+
+            string filePath = Path.Combine(wwwrootPath, fileName);
+
+            // Si no existe la imagen, la guardamos
+            if (!System.IO.File.Exists(filePath))
+            {
+                // Eliminar encabezado "data:image/jpeg;base64," si lo trae
+                if (foto.Contains(','))
+                {
+                    foto = foto.Split(',')[1];
+                }
+            }
+
+            // Guardamos el nombre en la base de datos
+            usuario.ImagenPerfil = fileName;
+            await this.context.SaveChangesAsync();
+
+            return await GetFotoUsuario(idUsuario); 
+        }
+
     }
 }

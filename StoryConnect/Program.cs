@@ -2,6 +2,7 @@ using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using StoryConnect.Context;
 using StoryConnect.Repositories;
+using StoryConnect_V2.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddDbContext<StoryContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("StorySQL")));
 builder.Services.AddTransient<IRepositoryLibros, RepositoryLibros>();
+builder.Services.AddTransient<HelperImages>();
 //builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();

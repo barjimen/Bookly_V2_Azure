@@ -10,6 +10,9 @@ using System.IO;
 using StoryConnect.Helper;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using StoryConnect_V2.Helper;
 
 namespace StoryConnect.Controllers
 {
@@ -17,10 +20,12 @@ namespace StoryConnect.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private IRepositoryLibros repo;
-        public UsuariosController(IRepositoryLibros repo, IWebHostEnvironment hostingEnvironment)
+        private HelperImages helperImages;
+        public UsuariosController(IRepositoryLibros repo, IWebHostEnvironment hostingEnvironment, HelperImages helperImages)
         {
             _hostingEnvironment = hostingEnvironment;
             this.repo = repo;
+            this.helperImages = helperImages;
         }
         public IActionResult Register()
         {
@@ -175,6 +180,60 @@ namespace StoryConnect.Controllers
             await this.repo.UpdateUsuarios(usuario);
             return View(usuario);
         }
+
+        public IActionResult SubirFichero()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubirFichero(IFormFile fichero)
+        {
+            int idusuario = (int)HttpContext.Session.GetInt32("id");
+
+            if (fichero == null || fichero.Length == 0)
+            {
+                return BadRequest("No se envió un archivo.");
+            }
+
+            string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+            string extension = Path.GetExtension(fichero.FileName).ToLowerInvariant();
+
+            if (!permittedExtensions.Contains(extension))
+            {
+                return BadRequest("Extensión de archivo no permitida.");
+            }
+
+            if (fichero.Length > 2 * 1024 * 1024) // 2 MB
+            {
+                return BadRequest("El archivo excede el tamaño máximo permitido.");
+            }
+
+            // Generar un nombre único para el archivo
+            string fileName = $"usuario_{idusuario}{extension}";
+
+            // Ruta física donde guardar el archivo
+            string path = this.helperImages.MapPath(fileName, Folders.Users);
+
+            // Asegurarse de que la carpeta existe
+            string directory = Path.GetDirectoryName(path);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            // Guardar el archivo
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await fichero.CopyToAsync(stream);
+            }
+
+            // Guardar solo el nombre del archivo en la base de datos
+            await this.repo.UpdateFotoUsuario(idusuario, fileName);
+
+            return RedirectToAction("Perfil");
+        }
+
     }
 
 }
