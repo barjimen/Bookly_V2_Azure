@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StoryConnect.Models;
+using BooklyNugget.Models;
 using StoryConnect.Repositories;
 
 namespace StoryConnect.Controllers

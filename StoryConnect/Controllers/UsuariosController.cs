@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StoryConnect.Models;
 using System.Security.Cryptography;
 using StoryConnect.Context;
 using StoryConnect.Repositories;
@@ -13,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using StoryConnect_V2.Helper;
+using BooklyNugget.Models;
 
 namespace StoryConnect.Controllers
 {
@@ -230,8 +230,9 @@ namespace StoryConnect.Controllers
 
             // Guardar solo el nombre del archivo en la base de datos
             await this.repo.UpdateFotoUsuario(idusuario, fileName);
+            var perfil = await this.repo.GetUsuario(idusuario);
 
-            return RedirectToAction("Perfil");
+            return RedirectToAction("Perfil", perfil);
         }
 
     }

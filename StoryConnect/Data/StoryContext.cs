@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StoryConnect.Models;
-using StoryConnect_V2.Models;
+
+using BooklyNugget.Models;
 
 namespace StoryConnect.Context
 {

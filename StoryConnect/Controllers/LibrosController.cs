@@ -1,9 +1,8 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc;
-using StoryConnect.Models;
 using StoryConnect.Repositories;
 using StoryConnect_V2.Helper;
-using StoryConnect_V2.Models;
+using BooklyNugget.Models;
 
 namespace StoryConnect.Controllers
 {

@@ -1,10 +1,9 @@
 ﻿
 using StoryConnect.Context;
-using StoryConnect.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
-using Microsoft.AspNetCore.Mvc;
 using StoryConnect.Helper;
+using BooklyNugget.Models;
 
 namespace StoryConnect.Repositories
 {

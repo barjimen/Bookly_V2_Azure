@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using StoryConnect.Models;
+using BooklyNugget.Models;
 
 namespace StoryConnect.Controllers
 {

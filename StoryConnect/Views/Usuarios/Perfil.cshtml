@@ -1,4 +1,4 @@
-﻿@model StoryConnect.Models.HomeUsuario
+﻿@model BooklyNugget.Models.HomeUsuario
 
 
 <!DOCTYPE html>
@@ -324,7 +324,10 @@
                         <label for="fotoPerfil" style="cursor: pointer;">
                             @if (Model.Usuarios.ImagenPerfil == "default.jpg")
                             {
-                                <img src="~/images/avatar.jpg"/>
+                                <img src="~/images/avatar.jpg"
+                                     style="width: 150px; height: 150px; object-fit: cover;
+                                background-color: #f8f9fa; border-radius: 50%;margin: 20px;
+                                position: relative; z-index: 5;" />
                             }
                             else
                             {

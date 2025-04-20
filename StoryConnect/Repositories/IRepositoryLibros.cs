@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
-using StoryConnect.Models;
+using BooklyNugget.Models;
 
 namespace StoryConnect.Repositories
 {
