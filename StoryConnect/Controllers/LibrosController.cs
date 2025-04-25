@@ -41,7 +41,7 @@ namespace StoryConnect.Controllers
 
             Libros libro = await this.repo.FindLibros(id);
             var etiquetas = await this.repo.ObtenerEtiquetasLibro(id);
-            List<Resenas> Reseñas = await this.repo.Reseñas(id);
+            List<ReseñaDTO> Reseñas = await this.repo.Reseñas(id);
 
             int listaId = 0;
             if (idUsuario.HasValue)

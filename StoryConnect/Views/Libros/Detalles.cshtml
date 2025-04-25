@@ -270,7 +270,7 @@
                     </div>
                     <div class="review-date">
                         <i class="fa fa-calendar"></i>
-                        <span>@review.fecha.ToString()</span>
+                        <span>@review.Fecha.ToString()</span>
                     </div>
                 </div>
 
@@ -278,31 +278,29 @@
                     <div class="user-avatar">
                         <i class="fa fa-user-circle"></i>
                     </div>
-                    <div class="user-id" style="color:dimgrey">User @review.Usuario.Nombre</div>
+                    <div class="user-id" style="color:dimgrey">User @review.NombreUsuario</div>
                 </div>
 
                 <div class="review-rating">
-                    @for (int i = 1; i <= review.calificacion; i++)
+                    @for (int i = 1; i <= review.Calificacion; i++)
                     {
                             <i class="fa fa-star"></i>
                         
                     }
-                    <span class="points">@review.calificacion</span> / 5
+                    <span class="points">@review.Calificacion</span> / 5
                 </div>
 
                 <div class="review-text">
-                    <p>@review.texto</p>
+                    <p>@review.Texto</p>
                 </div>
                 @if(idUsuario == review.UsuarioId)
                 {
                     <button class="btn btn-primary editar-resena"
                             data-idresena="@review.Id"
-                            data-usuario="@review.Usuario.Nombre"
-                            data-calificacion="@review.calificacion"
-                            data-texto="@review.texto"
-                            data-idLibro="@review.idLibro">
-                        
-                        
+                            data-usuario="@review.NombreUsuario"
+                            data-calificacion="@review.Calificacion"
+                            data-texto="@review.Texto"
+                            data-idLibro="@review.Id">
                         <i class="fa fa-edit"></i> Editar
                     </button>
                     
