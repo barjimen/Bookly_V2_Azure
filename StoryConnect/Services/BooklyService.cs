@@ -47,7 +47,7 @@ namespace StoryConnect_V2.Services
 
         public async Task<DetallesAutor> FindAutorAsync(int idAutor)
         {
-            string request = "/api/Autores/{idAutor}";
+            string request = "/api/Autores/" + idAutor;
             DetallesAutor detalles = await CallApiAsync<DetallesAutor>(request);
             return detalles;
         }
