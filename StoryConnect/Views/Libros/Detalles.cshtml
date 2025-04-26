@@ -1,11 +1,13 @@
 ﻿@model LibrosDetalles
 @{
     ViewData["Title"] = "Detalles";
-    var usuario = Context.Session.GetString("nombre");
-    var idUsuario = Context.Session.GetInt32("id");
-    var avatar = Context.Session.GetString("imagen_perfil");
+    
 }
-
+@{
+    var idUser = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+    var nombre = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+    var email = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+}
 
 
 <div class="container" style="background-color:whitesmoke; padding-top: 2rem!important; padding-bottom:6rem!important">
@@ -27,7 +29,7 @@
             <div class="text-center">
                 @if (Model.Libro.ImagenPortada != null)
                 {
-                    <img src="~/images/books/@Model.Libro.ImagenPortada" alt="Portada de @Model.Libro.Titulo" class="img-fluid rounded shadow book-cover" />
+                    <img src="@Model.Libro.ImagenPortada" alt="Portada de @Model.Libro.Titulo" class="img-fluid rounded shadow book-cover" />
                 }
                 else
                 {
@@ -37,7 +39,7 @@
                     </div>
                 }
 
-                @if(usuario != null)
+                @if (User.Identity.IsAuthenticated)
                 {
                 <div class="btn-group dropright mt-3">
                     <button class="btn dropdown-toggle
@@ -218,7 +220,7 @@
     </div>
     <hr />
     <div class="reviews-container">
-        @if(idUsuario != null)
+        @if (User.Identity.IsAuthenticated)
         {
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Añadir una reseña
@@ -293,18 +295,18 @@
                 <div class="review-text">
                     <p>@review.Texto</p>
                 </div>
-                @if(idUsuario == review.UsuarioId)
-                {
-                    <button class="btn btn-primary editar-resena"
-                            data-idresena="@review.Id"
-                            data-usuario="@review.NombreUsuario"
-                            data-calificacion="@review.Calificacion"
-                            data-texto="@review.Texto"
-                            data-idLibro="@review.Id">
-                        <i class="fa fa-edit"></i> Editar
-                    </button>
+                @if (!string.IsNullOrEmpty(idUser) && int.TryParse(idUser, out int userId) && userId == review.UsuarioId)
+                { 
+                    <button class="btn btn-primary editar-resena" 
+                           data-idresena="@review.Id" 
+                             data-usuario="@review.NombreUsuario" 
+                             data-calificacion="@review.Calificacion"
+                             data-texto="@review.Texto" 
+                             data-idLibro="@review.Id"> 
+                         <i class="fa fa-edit"></i> Editar 
+                     </button> 
                     
-                }
+                 } 
 
             </div>
         }

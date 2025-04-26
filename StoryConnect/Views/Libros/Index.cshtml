@@ -142,7 +142,7 @@
                     <div class="position-relative">
                         @if (!string.IsNullOrEmpty(item.ImagenPortada))
                         {
-                            <img src="~/images/books/@item.ImagenPortada" class="card-img-top" alt="@item.Titulo" style="height: 280px; object-fit: cover;">
+                            <img src="@item.ImagenPortada" class="card-img-top" alt="@item.Titulo" style="height: 280px; object-fit: cover;">
                         }
                         else
                         {

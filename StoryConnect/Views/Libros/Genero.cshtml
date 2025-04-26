@@ -1,13 +1,13 @@
-﻿@model List<Libros>
+﻿@model Generos
 
-<h1 class="mb-4">📖 Libros del género</h1>
+<h1 class="mb-4">📖 Libros del género: @Model.Genero.Nombre</h1>
 
 <div class="d-flex gap-3 pb-2" style="flex-wrap: wrap; justify-content: space-around">
-    @foreach (var libro in Model)
+    @foreach (var libro in Model.Libros)
     {
         <div class="text-center" style="min-width: 200px;">
             <a asp-action="Details" asp-controller="Libros" asp-route-id="@libro.Id">
-                <img src="~/images/books/@libro.ImagenPortada"
+                <img src="@libro.ImagenPortada"
                      alt="@libro.Titulo"
                      class="img-fluid rounded shadow-sm mb-2"
                      style="height: 200px; object-fit: cover;" />

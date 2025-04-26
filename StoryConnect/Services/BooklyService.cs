@@ -4,6 +4,7 @@ using BooklyNugget.Models;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
+using Azure;
 
 namespace StoryConnect_V2.Services
 {
@@ -50,7 +51,59 @@ namespace StoryConnect_V2.Services
                 }
             }
         }
-        
+        private async Task CallPostAsync<T>(string request, T model)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.UrlApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.header);
+
+                // Recuperar token de sesión
+                string token = this.contextAccessor.HttpContext.User.FindFirst("TOKEN")?.Value;
+                if (!string.IsNullOrEmpty(token))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                string json = JsonConvert.SerializeObject(model);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.PostAsync(request, content);
+
+                // 👇 En lugar de reventar, leemos la respuesta
+                if (!response.IsSuccessStatusCode)
+                {
+                    string errorResponse = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error en POST: {response.StatusCode}\n{errorResponse}");
+                }
+            }
+        }
+
+        private async Task CallPutAsync<T>(string request, T model)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.UrlApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.header);
+
+                // Recuperar token de sesión
+                string token = this.contextAccessor.HttpContext.User.FindFirst("TOKEN")?.Value;
+                if (!string.IsNullOrEmpty(token))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                string json = JsonConvert.SerializeObject(model);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.PutAsync(request, content);
+                response.EnsureSuccessStatusCode();
+            }
+        }
+
+
 
         public async Task<string> GetTokenAsync
        (string email, string password)
@@ -113,7 +166,56 @@ namespace StoryConnect_V2.Services
             LibrosDetalles detalles = await CallApiAsync<LibrosDetalles>(request);
             return detalles;
         }
+        public async Task<GenerosDTO> GetGeneros()
+        {
+            string request = "/api/Libros/GetGeneros";
+            GenerosDTO generos = await CallApiAsync<GenerosDTO>(request);
+            return generos;
+        }
 
+        public async Task<Generos> GetDetalleGenero(int idGenero)
+        {
+            string request = "/api/Libros/GetDetalleGenero/" + idGenero;
+            Generos generos = await CallApiAsync<Generos>(request);
+            return generos;
+        }
 
+        public async Task<List<LibrosBusquedaDTO>> BuscarLibros(string query)
+        {
+            string request = $"/api/Libros/BuscarLibros?query={query}";
+            List<LibrosBusquedaDTO> resultados = await this.CallApiAsync<List<LibrosBusquedaDTO>>(request);
+            return resultados;
+        }
+
+        public async Task<LibrosLeyendoProgreso> Home()
+        {
+            string request = "/api/Libros/Home";
+            LibrosLeyendoProgreso home = await CallApiAsync<LibrosLeyendoProgreso>(request);
+            return home;
+        }
+
+        public async Task MoverLibrosListas(int idLibro, int origen, int destino)
+        {
+            string request = "/api/Libros/MoverLibrosEntreListas/" + idLibro + "/" + origen + "/" + destino;
+            await this.CallApiAsync<object>(request);
+        }
+
+        public async Task ActualizarReseña(ReseñaDTO model)
+        {
+            string request = "/api/Libros/ActualizarReseña";
+            await this.CallPutAsync(request, model);
+        }
+
+        public async Task InsertReseña(ReseñaDTO model)
+        {
+            string request = "api/Libros/InsertReseña";
+            await CallPostAsync(request, model);
+        }
+
+        public async Task UpdateProgreso(ProgresoLectura progreso)
+        {
+            string request = "/api/Libros/UpdateProgreso";
+            await CallPutAsync(request, progreso);
+        }
     }
 }

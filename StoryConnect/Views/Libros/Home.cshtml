@@ -1,13 +1,13 @@
 ﻿@model BooklyNugget.Models.LibrosLeyendoProgreso
 @{
-    var nombreUsuario = Context.Session.GetString("nombre");
-    var idUsuario = Context.Session.GetInt32("id");
+    int idUser = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
+    var nombre = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
 }
     <title>Tu Biblioteca Personal</title>
 
 <div class="container-fluid" style="padding-top: 2rem!important; padding-bottom:6rem!important;">
     <div class="d-flex justify-content-between align-items-center mb-4" style="background-color: #f4f2f9; padding: 20px; border-radius: 8px;">
-        <h1 style="color: #56425D; font-family: 'Arial', sans-serif; font-size: 30px; font-weight: bold;">¡Hola, @nombreUsuario!</h1>
+        <h1 style="color: #56425D; font-family: 'Arial', sans-serif; font-size: 30px; font-weight: bold;">¡Hola, @nombre!</h1>
         <div class="d-flex justify-content-center flex-grow-1">
             <h5 style="text-align: center; color: #6c757d; font-style: italic;">
                 “—Por los que miran las estrellas y piensan «ojalá…, ojalá», Rhys —dije.”<br>
@@ -53,7 +53,7 @@
                                 <div class="col-md-3">
                                     @if (!string.IsNullOrEmpty(libro.ImagenPortada))
                                     {
-                                        <img src="~/images/books/@libro.ImagenPortada" class="img-fluid w-100" style="height: 200px; object-fit: cover;" alt="@libro.Titulo">
+                                        <img src="@libro.ImagenPortada" class="img-fluid w-100" style="height: 200px; object-fit: cover;" alt="@libro.Titulo">
                                     }
                                     else
                                     {
@@ -173,6 +173,7 @@
                                                                         <form id="formProgreso-@libro.Id" method="post" action="/Libros/UpdateProgreso">
                                                                             <input type="hidden" id="idProgreso" name="ID" value="@progresodata.ID" />
                                                                             <input type="hidden" id="idlibro" name="idLibro" value="@libro.Id" />
+                                                                            <input type="hidden" id="estado" name="estado" value="@libro.IdLista" />
 
                                                                             <div class="mb-3">
                                                                                 <label for="pagina" class="form-label">Página actual:</label>
