@@ -1,11 +1,21 @@
 ﻿@model Biblioteca
 @{
     ViewData["Title"] = "Biblioteca";
-    
-        var usuario = Context.Session.GetString("nombre");
-        var idUsuario = Context.Session.GetInt32("id");
-        var avatar = Context.Session.GetString("imagen_perfil");
 }
+
+
+@{
+    var idUser = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+    var nombre = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+    var email = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+
+    <p>Usuario: @email (ID: @idUser)</p>
+}
+
 
 <style>
     
@@ -164,7 +174,7 @@
                                style="background-color: #e9ecef; color: #495057; border: none; transition: all 0.2s ease;">
                                 <i class="bi bi-eye"></i> Detalles
                             </a>
-                            @if(usuario != null)
+                            @if (User.Identity.IsAuthenticated)
                             {
                             <div class="dropdown flex-grow-1">
                                 <button class="btn btn-sm rounded-pill shadow-sm w-100 dropdown-toggle

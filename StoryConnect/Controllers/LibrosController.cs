@@ -3,34 +3,29 @@ using Microsoft.AspNetCore.Mvc;
 using StoryConnect.Repositories;
 using StoryConnect_V2.Helper;
 using BooklyNugget.Models;
+using StoryConnect_V2.Services;
 
 namespace StoryConnect.Controllers
 {
     public class LibrosController : Controller
     {
         private IRepositoryLibros repo;
-        public LibrosController(IRepositoryLibros repo)
+        private BooklyService service;
+        public LibrosController(IRepositoryLibros repo, BooklyService service)
         {
             this.repo = repo;
+            this.service = service;
         }
         public async Task<IActionResult> Index()
         {
-            int? idUsuario = HttpContext.Session.GetInt32("id");
-
-            var libros = await this.repo.GetLibrosAsync(idUsuario);
-
-            var etiquetas = await this.repo.GetEtiquetas();
-            var autores = await this.repo.GetAutoresAsync();
-            var librosetiquetas = await this.repo.GetEtiquetasLibroByUsuario(idUsuario);
-
+            var request = await this.service.GetBibliotecaAsync();
             var datos = new Biblioteca
             {
-                Libros = libros,
-                Etiquetas = etiquetas,
-                Autores = autores,
-                LibroEtiquetas = librosetiquetas
+                Libros = request.Libros,
+                Etiquetas = request.Etiquetas,
+                Autores = request.Autores,
+                LibroEtiquetas = request.LibroEtiquetas
             };
-
             return View(datos);
         }
 

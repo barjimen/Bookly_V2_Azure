@@ -1,4 +1,5 @@
 using System.Configuration;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using StoryConnect.Context;
 using StoryConnect.Repositories;
@@ -23,6 +24,13 @@ builder.Services.AddTransient<HelperImages>();
 //builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Libros/Index";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    });
+
 
 var app = builder.Build();
 

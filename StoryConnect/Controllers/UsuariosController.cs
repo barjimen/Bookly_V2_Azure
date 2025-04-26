@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using StoryConnect_V2.Helper;
 using BooklyNugget.Models;
+using StoryConnect_V2.Services;
 
 namespace StoryConnect.Controllers
 {
@@ -21,11 +22,13 @@ namespace StoryConnect.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private IRepositoryLibros repo;
         private HelperImages helperImages;
-        public UsuariosController(IRepositoryLibros repo, IWebHostEnvironment hostingEnvironment, HelperImages helperImages)
+        private BooklyService service;
+        public UsuariosController(IRepositoryLibros repo, IWebHostEnvironment hostingEnvironment, HelperImages helperImages, BooklyService service)
         {
             _hostingEnvironment = hostingEnvironment;
             this.repo = repo;
             this.helperImages = helperImages;
+            this.service = service;
         }
         public IActionResult Register()
         {
@@ -42,35 +45,6 @@ namespace StoryConnect.Controllers
         public IActionResult Login()
         {
             return View();
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> Login(string email, string password)
-        {
-            var usuario = await this.repo.Login(email, password);
-            if (usuario != null)
-            {
-                HttpContext.Session.SetInt32("id", usuario.Id);
-                HttpContext.Session.SetString("nombre", usuario.Nombre);
-                HttpContext.Session.SetString("email", usuario.email);
-                HttpContext.Session.SetString("tipo_usuario", usuario.TipoUsuario);
-                HttpContext.Session.SetString("imagen_perfil", usuario.ImagenPerfil);
-
-                return RedirectToAction("Home", "Libros");
-            }
-            else
-            {
-                ViewData["MENSAJE"] = "Usuario o contraseña incorrectos.";
-                return View();
-            }
-        }
-
-
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Index", "Home");
         }
 
 
