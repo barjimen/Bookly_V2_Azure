@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Azure;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace StoryConnect_V2.Services
 {
@@ -196,8 +197,8 @@ namespace StoryConnect_V2.Services
 
         public async Task MoverLibrosListas(int idLibro, int origen, int destino)
         {
-            string request = "/api/Libros/MoverLibrosEntreListas/" + idLibro + "/" + origen + "/" + destino;
-            await this.CallApiAsync<object>(request);
+            string request = $"/api/Libros/MoverLibrosEntreListas?idlibro={idLibro}&origen={origen}&destino={destino}";
+            await this.CallPostAsync<object>(request, null);
         }
 
         public async Task ActualizarReseña(ReseñaDTO model)
@@ -216,6 +217,41 @@ namespace StoryConnect_V2.Services
         {
             string request = "/api/Libros/UpdateProgreso";
             await CallPutAsync(request, progreso);
+        }
+
+        //Usuarios
+
+        public async Task Register(Register user)
+        {
+            string request = "api/Usuarios/Register";
+            await CallPostAsync<object>(request, user);
+        }
+
+        public async Task<HomeUsuario> Perfil()
+        {
+            string request = "/api/Usuarios/Perfil";
+            HomeUsuario home = await CallApiAsync<HomeUsuario>(request);
+            return home;
+        }
+
+        public async Task<MisLibros> MisLibros()
+        {
+            string request = "/api/Usuarios/MisLibros";
+            MisLibros mislibros = await CallApiAsync<MisLibros>(request);
+            return mislibros;
+        }
+
+        public async Task<ObjetivosUsuarios> MisObjetivos()
+        {
+            string request = "/api/Usuarios/MisObjetivos";
+            ObjetivosUsuarios objetivos = await CallApiAsync<ObjetivosUsuarios>(request);
+            return objetivos;
+        }
+
+        public async Task InsertarObjetivo(ObjetivosUsuarios objetivo)
+        {
+            string request = "/api/Usuarios/InsertObjetivo";
+            await CallPostAsync<object>(request, objetivo);
         }
     }
 }

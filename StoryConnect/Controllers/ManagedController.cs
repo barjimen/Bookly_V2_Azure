@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using StoryConnect_V2.Services;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using BooklyNugget.Models;
 
 namespace StoryConnect_V2.Controllers
@@ -67,8 +66,32 @@ namespace StoryConnect_V2.Controllers
                     }
                 );
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Home", "Libros");
             }
+        }
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register(Register user)
+        {
+            if (ModelState.IsValid)
+            {
+                // 1. Registrar el usuario
+                await this.service.Register(user);
+
+                // 2. Hacer login automáticamente
+                return await Login(new LogIn
+                {
+                    email = user.Email,
+                    password = user.Password
+                });
+            }
+
+            return View(user);
+
         }
 
 

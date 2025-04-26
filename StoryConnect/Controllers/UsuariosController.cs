@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication;
 using StoryConnect_V2.Helper;
 using BooklyNugget.Models;
 using StoryConnect_V2.Services;
+using System.Security.Claims;
 
 namespace StoryConnect.Controllers
 {
@@ -30,17 +31,6 @@ namespace StoryConnect.Controllers
             this.helperImages = helperImages;
             this.service = service;
         }
-        public IActionResult Register()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> Register(string nombre, string email, string password)
-        {
-            await this.repo.Register(nombre, email, password);
-            ViewData["Mensaje"] = "Usuario registrado correctamente.";
-            return RedirectToAction("Index", "Home");
-        }
 
         public IActionResult Login()
         {
@@ -48,47 +38,32 @@ namespace StoryConnect.Controllers
         }
 
 
-        public IActionResult Index()
+        public IActionResult Register()
         {
             return View();
         }
 
         public async Task<IActionResult> Perfil()
         {
-            int idUser = (int)HttpContext.Session.GetInt32("id");
-            var usuario = await this.repo.GetUsuario(idUser);
-            var CountLibros = await this.repo.ObtenerCountListas(idUser);
-            var librosPredefinidos = await this.repo.LibrosEnPredefinidos(idUser);
-            var objetivos = await this.repo.ObjetivosUsuarios(idUser);
-            ProgresoLectura progreso = null;
-            if (librosPredefinidos.Count > 0)
+            var request = await this.service.Perfil();
+            var home = new HomeUsuario
             {
-                int idLibro = librosPredefinidos.First().IdLibro;
-                progreso = await this.repo.GetProgresoLectura(idUser, idLibro);
-            }
-
-            var homeUsuario = new HomeUsuario
-            {
-                Usuarios = usuario,
-                CountLibrosPred = CountLibros,
-                LibrosListasPred = librosPredefinidos,
-                ObjetivosUsuarios = objetivos,
-                ProgresoLectura = progreso
+                Usuarios = request.Usuarios,
+                CountLibrosPred = request.CountLibrosPred,
+                LibrosListasPred = request.LibrosListasPred,
+                ObjetivosUsuarios = request.ObjetivosUsuarios,
+                ProgresoLectura = request.ProgresoLectura
             };
-
-            return View(homeUsuario);
+            return View(home);
         }
 
         public async Task<IActionResult> MisLibros()
         {
-            int idUser = (int)HttpContext.Session.GetInt32("id");
-            var CountLibros = await this.repo.ObtenerCountListas(idUser);
-
-
+            var response = await this.service.MisLibros();
             var MisLibros = new MisLibros
             {
-                IdUsuario = idUser,
-                CountLibrosPred = CountLibros
+                CountLibrosPred = response.CountLibrosPred,
+                IdUsuario = response.IdUsuario
             };
 
             return View(MisLibros);
@@ -110,19 +85,39 @@ namespace StoryConnect.Controllers
 
         public async Task<IActionResult> MisObjetivos()
         {
-            int idUser = (int)HttpContext.Session.GetInt32("id");
-
-            var objetivos = await this.repo.ObjetivosUsuarios(idUser);
+            var request = await this.service.MisObjetivos();
+            ObjetivosUsuarios objetivos = new ObjetivosUsuarios
+            {
+                idObjetivo = request.idObjetivo,
+                IdUsuario = request.IdUsuario,
+                NombreObjetivo = request.NombreObjetivo,
+                Inicio = request.Inicio,
+                Fin = request.Fin,
+                TipoObjetivo = request.TipoObjetivo,
+                Meta = request.Meta,
+                ProgresoActual = request.ProgresoActual,
+                estado = request.estado
+            };
             return View(objetivos);
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertObjetivo(ObjetivosUsuarios objetivos)
+        public async Task<IActionResult> InsertObjetivo(ObjetivosUsuarios objetivo)
         {
-            int idUser = (int)HttpContext.Session.GetInt32("id");
-
-            await this.repo.InsertObjetivo(idUser, objetivos.NombreObjetivo, objetivos.Fin, objetivos.TipoObjetivo,objetivos.Meta);
-            return RedirectToAction("MisObjetivos", idUser);
+            ObjetivosUsuarios obj = new ObjetivosUsuarios
+            {
+                idObjetivo = objetivo.idObjetivo,
+                IdUsuario = objetivo.IdUsuario,
+                NombreObjetivo = objetivo.NombreObjetivo,
+                Inicio = objetivo.Inicio,
+                Fin = objetivo.Fin,
+                TipoObjetivo = objetivo.TipoObjetivo,
+                Meta = objetivo.Meta,
+                ProgresoActual = objetivo.ProgresoActual,
+                estado = objetivo.estado
+            };
+            await this.service.InsertarObjetivo(obj);
+            return RedirectToAction("MisObjetivos", objetivo.IdUsuario);
         }
 
 

@@ -1,7 +1,5 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc;
-using StoryConnect.Repositories;
-using StoryConnect_V2.Helper;
 using BooklyNugget.Models;
 using StoryConnect_V2.Services;
 using System.Security.Claims;
@@ -10,11 +8,9 @@ namespace StoryConnect.Controllers
 {
     public class LibrosController : Controller
     {
-        private IRepositoryLibros repo;
         private BooklyService service;
-        public LibrosController(IRepositoryLibros repo, BooklyService service)
+        public LibrosController(BooklyService service)
         {
-            this.repo = repo;
             this.service = service;
         }
         public async Task<IActionResult> Index()
@@ -41,28 +37,6 @@ namespace StoryConnect.Controllers
                 ListaLibro = request.ListaLibro
             };
             return View(libro);
-            //int? idUsuario = HttpContext.Session.GetInt32("id");
-
-            //Libros libro = await this.repo.FindLibros(id);
-            //var etiquetas = await this.repo.ObtenerEtiquetasLibro(id);
-            //List<ReseñaDTO> Reseñas = await this.repo.Reseñas(id);
-
-            //int listaId = 0;
-            //if (idUsuario.HasValue)
-            //{
-            //    listaId = await this.repo.LibrosListaDetalle(id, idUsuario.Value);
-            //    if (listaId == 0)
-            //        listaId = 0;
-            //}
-            //var detallesLibro = new LibrosDetalles
-            //{
-            //    Libro = libro,
-            //    Etiquetas = etiquetas,
-            //    Resenas = Reseñas,
-            //    ListaLibro = listaId
-            //};
-
-            //return View(detallesLibro);
         }
 
         [HttpGet]
@@ -85,45 +59,16 @@ namespace StoryConnect.Controllers
             var libros = new LibrosLeyendoProgreso
             {
                 Leyendos = request.Leyendos,
-                ProgresoLectura = request.ProgresoLectura
+                ProgresoLectura = request.ProgresoLectura ?? new List<ProgresoLectura>()
             };
             return View(libros);
-            //int? idUsuario = HttpContext.Session.GetInt32("id");
-
-            //List<LibrosLeyendo> libro = await this.repo.LibrosLeyendo(idUsuario.Value);
-            //List<ProgresoLectura> progresoLectura = new List<ProgresoLectura>();
-
-            //foreach (var lib in libro)
-            //{
-            //    var progresosLectura = await this.repo.GetProgresoLectura(idUsuario.Value, lib.Id);
-            //    progresoLectura.Add(progresosLectura);
-            //}
-
-            //var libros = new LibrosLeyendoProgreso
-            //{
-            //    Leyendos = libro,
-            //    ProgresoLectura = progresoLectura
-            //};
-
-            //return View(libros);
         }
 
         [HttpPost]
         public async Task<IActionResult> MoverLibrosEntreListas(int idlibro, int origen, int destino)
         {
             await this.service.MoverLibrosListas(idlibro, origen, destino);
-
-            //int idusuario = (int)HttpContext.Session.GetInt32("id");
-            //Console.WriteLine(idusuario.ToString(), idlibro, origen, destino);
-            //await this.repo.MoverLibrosLista(idusuario, idlibro, origen, destino);
-            //if (destino == 1)
-            //    await this.repo.InsertProgreso(idusuario, idlibro);
-            //else if (destino != 1)
-            //{
-            //    int id = (int)await this.repo.FindProgreso(idusuario, idlibro);
-            //    await this.repo.DeleteProgreso(id, idusuario);
-            //}
-            return RedirectToAction("Home");
+            return Ok();
         }
 
         [HttpPost]
@@ -165,12 +110,10 @@ namespace StoryConnect.Controllers
                 Texto = model.Texto,
                 Calificacion = model.Calificacion,
                 Fecha = model.Fecha,
-
             };
 
             await this.service.InsertReseña(reseña);
             return RedirectToAction("Detalles", "Libros", new { id = model.IdLibro });
-
         }
 
         [HttpPost]
@@ -204,28 +147,6 @@ namespace StoryConnect.Controllers
                 TodosLosGeneros = request.TodosLosGeneros
             };
             return View(VistaGeneros);
-            //int? idUsuario = HttpContext.Session.GetInt32("id");
-
-            //var etiquetas = await this.repo.GetEtiquetas();
-            //List<LibrosDTO> libros = await this.repo.GetLibrosAsync(idUsuario);
-            //var generosConLibros = etiquetas.Select(e => new Generos
-            //{
-            //    Genero = e,
-            //    Libros = libros.Where(l => l.EtiquetaId == e.Id).ToList()
-            //}).Where(x => x.Libros.Any()).ToList();
-
-
-            //generosConLibros.Shuffle();
-
-            //var generarAleatorios = generosConLibros.Take(2).ToList();
-
-            //var VistaGeneros = new GenerosDTO
-            //{
-            //    GenerosDestacados = generarAleatorios,
-            //    TodosLosGeneros = etiquetas
-            //};
-
-            //return View(VistaGeneros);
         }
 
         public async Task<IActionResult> Genero(int id)
@@ -237,10 +158,6 @@ namespace StoryConnect.Controllers
                 Libros = request.Libros
             };
             return View(VistaGeneros);
-            //int? idUsuario = HttpContext.Session.GetInt32("id");
-
-            //List<Libros> libros = await this.repo.FiltrarPorEtiquetas(id);
-            //return View(libros);
         }
     }
 }
