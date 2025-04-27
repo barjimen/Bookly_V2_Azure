@@ -6,15 +6,14 @@ using StoryConnect.Context;
 using StoryConnect.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
-using StoryConnect.Helper;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using StoryConnect_V2.Helper;
 using BooklyNugget.Models;
 using StoryConnect_V2.Services;
 using System.Security.Claims;
+using Azure.Storage.Blobs;
 
 namespace StoryConnect.Controllers
 {
@@ -22,13 +21,11 @@ namespace StoryConnect.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private IRepositoryLibros repo;
-        private HelperImages helperImages;
         private BooklyService service;
-        public UsuariosController(IRepositoryLibros repo, IWebHostEnvironment hostingEnvironment, HelperImages helperImages, BooklyService service)
+        public UsuariosController(IRepositoryLibros repo, IWebHostEnvironment hostingEnvironment, BooklyService service)
         {
             _hostingEnvironment = hostingEnvironment;
             this.repo = repo;
-            this.helperImages = helperImages;
             this.service = service;
         }
 
@@ -93,7 +90,7 @@ namespace StoryConnect.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertObjetivo(ObjetivosUsuarios objetivo)
         {
-            var idUser =int.Parse( User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+            var idUser = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
 
             ObjetivosUsuarios obj = new ObjetivosUsuarios
             {
@@ -165,61 +162,68 @@ namespace StoryConnect.Controllers
             await this.service.UpdateUsuarioData(usu);
             return RedirectToAction("Perfil");
         }
+    
+
+
+        public IActionResult SubirFichero()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubirFichero(IFormFile fichero)
+        {
+            var idUser = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+
+            if (fichero == null || fichero.Length == 0)
+            {
+                return BadRequest("No se envió un archivo.");
+            }
+
+            // Validación de extensiones permitidas
+            string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+            string extension = Path.GetExtension(fichero.FileName).ToLowerInvariant();
+
+            if (!permittedExtensions.Contains(extension))
+            {
+                return BadRequest("Extensión de archivo no permitida.");
+            }
+
+            // Validación de tamaño
+            if (fichero.Length > 2 * 1024 * 1024) // 2 MB
+            {
+                return BadRequest("El archivo excede el tamaño máximo permitido.");
+            }
+
+            // Generar un nombre único para el archivo
+            string fileName = $"usuario_{idUser}{extension}";
+
+            // Configuración del cliente de Azure Blob Storage
+            string connectionString = "DefaultEndpointsProtocol=https;AccountName=storagebooklybja;AccountKey=GXewDrOYW2lH5a8ZkgG9SPKSoz+cPW2AQAIHihpC7dIKVgGGDtWuyaOYjEsNUS6DSyk451yzbD/++ASt3BsbQg==;EndpointSuffix=core.windows.net";
+            string containerName = "imagesbookly";
+
+            // Crear el cliente del contenedor
+            var blobServiceClient = new BlobServiceClient(connectionString);
+            var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+            string blobPath = $"Users/{fileName}";
+
+            var blobClient = blobContainerClient.GetBlobClient(blobPath);
+
+            using (var stream = fichero.OpenReadStream())
+            {
+                await blobClient.UploadAsync(stream, overwrite: true);
+            }
+
+            
+            string fileUrl = blobClient.Uri.ToString();
+            await this.repo.UpdateFotoUsuario(idUser, fileName);
+            var perfil = await this.service.GetUsuario(idUser);
+
+            return RedirectToAction("Perfil");
+        }
+
+
+
     }
-
-
-        //public IActionResult SubirFichero()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> SubirFichero(IFormFile fichero)
-        //{
-        //    int idusuario = (int)HttpContext.Session.GetInt32("id");
-
-        //    if (fichero == null || fichero.Length == 0)
-        //    {
-        //        return BadRequest("No se envió un archivo.");
-        //    }
-
-        //    string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
-        //    string extension = Path.GetExtension(fichero.FileName).ToLowerInvariant();
-
-        //    if (!permittedExtensions.Contains(extension))
-        //    {
-        //        return BadRequest("Extensión de archivo no permitida.");
-        //    }
-
-        //    if (fichero.Length > 2 * 1024 * 1024) // 2 MB
-        //    {
-        //        return BadRequest("El archivo excede el tamaño máximo permitido.");
-        //    }
-
-        //    // Generar un nombre único para el archivo
-        //    string fileName = $"usuario_{idusuario}{extension}";
-
-        //    // Ruta física donde guardar el archivo
-        //    string path = this.helperImages.MapPath(fileName, Folders.Users);
-
-        //    // Asegurarse de que la carpeta existe
-        //    string directory = Path.GetDirectoryName(path);
-        //    if (!Directory.Exists(directory))
-        //    {
-        //        Directory.CreateDirectory(directory);
-        //    }
-
-        //    // Guardar el archivo
-        //    using (var stream = new FileStream(path, FileMode.Create))
-        //    {
-        //        await fichero.CopyToAsync(stream);
-        //    }
-
-        //    // Guardar solo el nombre del archivo en la base de datos
-        //    await this.repo.UpdateFotoUsuario(idusuario, fileName);
-        //    var perfil = await this.repo.GetUsuario(idusuario);
-
-        //    return RedirectToAction("Perfil", perfil);
-        //}
-
 }

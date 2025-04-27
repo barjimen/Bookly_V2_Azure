@@ -225,7 +225,117 @@
             </div>
         </div>
     </main>
-    <script src="~/js/live-search.js">
+    <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('toggleSidebar').addEventListener('click', function () {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+            });
+
+            let searchBox = document.getElementById("searchBox");
+            let searchResults = document.getElementById("searchResults");
+
+            function adjustDropdownWidth() {
+                if (searchBox) {
+                    searchResults.style.width = `${searchBox.offsetWidth}px`;
+                }
+            }
+
+            adjustDropdownWidth();
+            window.addEventListener("resize", adjustDropdownWidth);
+
+            searchBox.addEventListener("input", function () {
+                let query = searchBox.value.trim();
+                if (query.length < 3) {
+                    searchResults.style.display = "none";
+                    return;
+                }
+
+                fetch(`/Libros/BuscarLibros?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Limpiar resultados anteriores
+                        searchResults.innerHTML = "";
+
+                        if (data.results.length === 0) {
+                            let noResults = document.createElement("div");
+                            noResults.className = "dropdown-item";
+                            noResults.textContent = "No se encontraron resultados";
+                            searchResults.appendChild(noResults);
+                        } else {
+                            console.log(data.results);
+
+                            // Crear elementos para cada resultado
+                            data.results.forEach(libro => {
+                                let item = document.createElement("a");
+                                item.href = `/Libros/Detalles/${libro.id}`;
+                                item.classList.add("dropdown-item");
+
+                                // Crear contenedor flex
+                                let container = document.createElement("div");
+                                container.style.display = "flex";
+                                container.style.alignItems = "center";
+                                container.style.gap = "10px";
+
+                                // Crear contenedor para la imagen
+                                let imgContainer = document.createElement("div");
+
+                                // Crear imagen
+                                let img = document.createElement("img");
+                                img.src = libro.imagen;
+                                img.alt = "Portada";
+                                img.style.width = "40px";
+                                img.style.height = "60px";
+                                img.style.objectFit = "cover";
+                                img.style.borderRadius = "5px";
+                                img.style.backgroundColor = "lightgray";
+
+                                // Manejar error de carga de imagen
+                                img.onerror = function() {
+                                    console.error("Error cargando imagen:", libro.imagen);
+                                    this.src = "/images/no-cover.jpg"; // Imagen por defecto (ajusta la ruta según tu proyecto)
+                                };
+
+                                // Contenedor para el texto (título y autor)
+                                let textContainer = document.createElement("div");
+
+                                // Crear título
+                                let title = document.createElement("strong");
+                                title.textContent = libro.titulo;
+
+                                // Crear autor
+                                let author = document.createElement("small");
+                                author.textContent = libro.autor;
+
+                                // Añadir elementos al DOM
+                                imgContainer.appendChild(img);
+
+                                textContainer.appendChild(title);
+                                textContainer.appendChild(document.createElement("br"));
+                                textContainer.appendChild(author);
+
+                                // Añadir imagen y texto al contenedor principal
+                                container.appendChild(imgContainer);
+                                container.appendChild(textContainer);
+
+                                item.appendChild(container);
+                                searchResults.appendChild(item);
+
+                                // Para debugging
+                                console.log('URL imagen:', libro.imagen);
+                            });
+                        }
+
+                        searchResults.style.display = "block";
+                    })
+                    .catch(error => console.error("Error en la búsqueda:", error));
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!searchBox.contains(event.target) && !searchResults.contains(event.target)) {
+                    searchResults.style.display = "none";
+                }
+            });
+        });
     </script>
 </body>
 </html>

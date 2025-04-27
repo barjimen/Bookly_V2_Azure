@@ -37,9 +37,16 @@
                         let item = document.createElement("a");
                         item.href = `/Libros/Detalles/${libro.id}`;
                         item.classList.add("dropdown-item");
-                        item.textContent = libro.titulo;
-                        item.textContent += ` (${libro.autor})`;
-                        item.textContent += ` (${libro.imagen})`;
+                        item.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div>
+                                <strong>${libro.titulo}</strong><br>
+                                <small>${libro.autor}</small>
+                                </div>
+                            </div>
+                        `;
+                        console.log('URL imagen:', libro.imagen);
+
                         searchResults.appendChild(item);
                     });
                 }

@@ -34,14 +34,14 @@
                             </a>
 
                             <div class="dropdown flex-grow-1">
-                                <button class="btn btn-sm rounded-pill shadow-sm w-100 dropdown-toggle
+                                <button class="btn btn-sm rounded-pill shadow-sm w-100
                                 @(libro.ListaId == 1 ? "btn-primary" :
                                 libro.ListaId == 2 ? "btn-success" :
                                 libro.ListaId == 3 ? "btn-warning" :
                                 libro.ListaId == 4 ? "btn-dark" : "btn-secondary")"
                                         style="border: none; transition: all 0.2s ease;"
                                         type="button" id="dropdownMenuButton-@libro.Id"
-                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
 
                                     @if (libro.ListaId == 0)
                                     {
@@ -61,28 +61,28 @@
                                     }
                                     else if (libro.ListaId == 4)
                                     {
-                                        <span><i class="bi bi-x-circle me-1"></i>No terminado</span>
+                                        <span><i class="bi bi-x-circle me-1"></i>Sin terminar</span>
                                     }
                                 </button>
 
-                                <div class="dropdown-menu shadow-sm border-0 rounded-3" aria-labelledby="dropdownMenuButton-@libro.Id">
-                                    <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="1" data-origen="@libro.ListaId">
-                                        <i class="bi bi-book text-primary me-2"></i>Leyendo
-                                    </button>
-                                    <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="2" data-origen="@libro.ListaId">
-                                        <i class="bi bi-check-circle text-success me-2"></i>Leído
-                                    </button>
-                                    <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="3" data-origen="@libro.ListaId">
-                                        <i class="bi bi-hourglass text-warning me-2"></i>Próxima Lectura
-                                    </button>
-                                    <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="4" data-origen="@libro.ListaId">
-                                        <i class="bi bi-x-circle text-dark me-2"></i>No Terminado
-                                    </button>
-                                    <div class="dropdown-divider"></div>
-                                    <button class="dropdown-item mover-libro text-danger" data-idLibro="@libro.Id" data-destino="0" data-origen="@libro.ListaId">
-                                        <i class="bi bi-trash me-2"></i>Eliminar
-                                    </button>
-                                </div>
+                                @* <div class="dropdown-menu shadow-sm border-0 rounded-3" aria-labelledby="dropdownMenuButton-@libro.Id"> *@
+                                @*     <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="1" data-origen="@libro.ListaId" disabled> *@
+                                @*         <i class="bi bi-book text-primary me-2"></i>Leyendo *@
+                                @*     </button> *@
+                                @*     <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="2" data-origen="@libro.ListaId" disabled> *@
+                                @*         <i class="bi bi-check-circle text-success me-2"></i>Leído *@
+                                @*     </button> *@
+                                @*     <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="3" data-origen="@libro.ListaId" disabled> *@
+                                @*         <i class="bi bi-hourglass text-warning me-2"></i>Próxima Lectura *@
+                                @*     </button> *@
+                                @*     <button class="dropdown-item mover-libro" data-idLibro="@libro.Id" data-destino="4" data-origen="@libro.ListaId" disabled> *@
+                                @*         <i class="bi bi-x-circle text-dark me-2"></i>Sin terminar *@
+                                @*     </button> *@
+                                @*     <div class="dropdown-divider"></div> *@
+                                @*     <button class="dropdown-item mover-libro text-danger" data-idLibro="@libro.Id" data-destino="0" data-origen="@libro.ListaId" disabled> *@
+                                @*         <i class="bi bi-trash me-2"></i>Eliminar *@
+                                @*     </button> *@
+                                @* </div> *@
                             </div>
                         </div>
                     </div>
@@ -147,25 +147,11 @@
 
 
 
+<!-- Asegúrate de tener SweetAlert2 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    $(document).ready(function () {
-        // Book moving functionality (your original code)
-        $(".mover-libro").click(function () {
-            var idlibro = $(this).data("idlibro");
-            var destino = $(this).data("destino");
-            var origen = $(this).data("origen");
-
-            $.ajax({
-                url: '/Libros/MoverLibrosEntreListas',
-                type: 'POST',
-                data: { idlibro: idlibro, destino: destino, origen: origen },
-                success: function (response) {
-                    alert("item movido exitosamente.");
-                    location.reload(); // Recargar la página para actualizar la lista
-                },
-                error: function (xhr, status, error) {
-                    alert("Error al mover el item: " + xhr.responseText);
-                }
-            });
-        });
+   
 </script>
+

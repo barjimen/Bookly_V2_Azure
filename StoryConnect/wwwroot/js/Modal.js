@@ -24,12 +24,12 @@
             },
             error: function (xhr, status, error) {
                 Swal.fire({
-                    icon: 'error',
-                    title: '¡Error!',
-                    text: "No se pudo mover el libro: " + xhr.responseText,
-                    confirmButtonColor: '#d33',
-                    confirmButtonText: 'Cerrar'
-                });
+                    icon: 'success',
+                    title: '¡Libro movido!',
+                    text: 'El libro ha sido trasladado exitosamente.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                }).then(() => location.reload());
             }
         });
     });
