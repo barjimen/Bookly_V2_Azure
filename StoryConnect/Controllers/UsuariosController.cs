@@ -86,35 +86,26 @@ namespace StoryConnect.Controllers
         public async Task<IActionResult> MisObjetivos()
         {
             var request = await this.service.MisObjetivos();
-            ObjetivosUsuarios objetivos = new ObjetivosUsuarios
-            {
-                idObjetivo = request.idObjetivo,
-                IdUsuario = request.IdUsuario,
-                NombreObjetivo = request.NombreObjetivo,
-                Inicio = request.Inicio,
-                Fin = request.Fin,
-                TipoObjetivo = request.TipoObjetivo,
-                Meta = request.Meta,
-                ProgresoActual = request.ProgresoActual,
-                estado = request.estado
-            };
+            List<ObjetivosUsuarios> objetivos = request;
             return View(objetivos);
         }
 
         [HttpPost]
         public async Task<IActionResult> InsertObjetivo(ObjetivosUsuarios objetivo)
         {
+            var idUser =int.Parse( User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+
             ObjetivosUsuarios obj = new ObjetivosUsuarios
             {
                 idObjetivo = objetivo.idObjetivo,
-                IdUsuario = objetivo.IdUsuario,
+                IdUsuario = idUser,
                 NombreObjetivo = objetivo.NombreObjetivo,
-                Inicio = objetivo.Inicio,
+                Inicio = DateTime.Now,
                 Fin = objetivo.Fin,
                 TipoObjetivo = objetivo.TipoObjetivo,
                 Meta = objetivo.Meta,
                 ProgresoActual = objetivo.ProgresoActual,
-                estado = objetivo.estado
+                estado = "activo"
             };
             await this.service.InsertarObjetivo(obj);
             return RedirectToAction("MisObjetivos", objetivo.IdUsuario);
@@ -123,87 +114,112 @@ namespace StoryConnect.Controllers
 
         public async Task<IActionResult> DeleteObjetivo(int idObjetivo)
         {
-            int idUser = (int)HttpContext.Session.GetInt32("id");
-            await this.repo.DeleteObjetivo(idObjetivo);
-            return RedirectToAction("MisObjetivos", idUser);
-        }
-
-        public async Task<IActionResult> UpdateProgreso(ObjetivosUsuarios objetivos)
-        {
-            int idusuario = (int)HttpContext.Session.GetInt32("id");
-
-            await this.repo.UpdateObjetivo(objetivos.idObjetivo, idusuario, objetivos.ProgresoActual);
-            return RedirectToAction("MisObjetivos", new { id = objetivos.IdUsuario });
-        }
-
-        public async Task<IActionResult>UpdateUsuario()
-        {
-            int idUser = (int)HttpContext.Session.GetInt32("id");
-            var usuario = await this.repo.GetUsuario(idUser);
-            return View(usuario);
+            var idUser = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            await this.service.DeleteObjetivoUsuario(idObjetivo);
+            return RedirectToAction("MisObjetivos");
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateUsuario(Usuarios usuario, IFormFile ProfileImageFile)
+        public async Task<IActionResult> UpdateProgresoObjetivo(ObjetivosUsuarios objetivos)
         {
-            await this.repo.UpdateUsuarios(usuario);
+            var idUser = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+            ObjetivosUsuarios objt = new ObjetivosUsuarios
+            {
+                idObjetivo = objetivos.idObjetivo,
+                IdUsuario = idUser,
+                NombreObjetivo = objetivos.NombreObjetivo,
+                Inicio = objetivos.Inicio,
+                Fin = objetivos.Fin,
+                TipoObjetivo = objetivos.TipoObjetivo,
+                Meta = objetivos.Meta,
+                ProgresoActual = objetivos.ProgresoActual,
+                estado = objetivos.estado
+            };
+            await this.service.UpdateProgresoObjetivo(objt);
+            return RedirectToAction("MisObjetivos");
+        }
+
+        public async Task<IActionResult> UpdateUsuario()
+        {
+            var idUser = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+            var usuario = await this.service.GetUsuario(idUser);
             return View(usuario);
         }
-
-        public IActionResult SubirFichero()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public async Task<IActionResult> SubirFichero(IFormFile fichero)
+        public async Task<IActionResult> UpdateUsuario(Usuarios usuario)
         {
-            int idusuario = (int)HttpContext.Session.GetInt32("id");
-
-            if (fichero == null || fichero.Length == 0)
+            var idUser = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+            var data = await this.service.GetUsuario(idUser);
+            var usu = new Usuarios
             {
-                return BadRequest("No se envió un archivo.");
-            }
-
-            string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
-            string extension = Path.GetExtension(fichero.FileName).ToLowerInvariant();
-
-            if (!permittedExtensions.Contains(extension))
-            {
-                return BadRequest("Extensión de archivo no permitida.");
-            }
-
-            if (fichero.Length > 2 * 1024 * 1024) // 2 MB
-            {
-                return BadRequest("El archivo excede el tamaño máximo permitido.");
-            }
-
-            // Generar un nombre único para el archivo
-            string fileName = $"usuario_{idusuario}{extension}";
-
-            // Ruta física donde guardar el archivo
-            string path = this.helperImages.MapPath(fileName, Folders.Users);
-
-            // Asegurarse de que la carpeta existe
-            string directory = Path.GetDirectoryName(path);
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            // Guardar el archivo
-            using (var stream = new FileStream(path, FileMode.Create))
-            {
-                await fichero.CopyToAsync(stream);
-            }
-
-            // Guardar solo el nombre del archivo en la base de datos
-            await this.repo.UpdateFotoUsuario(idusuario, fileName);
-            var perfil = await this.repo.GetUsuario(idusuario);
-
-            return RedirectToAction("Perfil", perfil);
+                Id = idUser,
+                Nombre = usuario.Nombre,
+                email = usuario.email,
+                Password_hash = data.Password_hash,
+                ImagenPerfil = usuario.ImagenPerfil,
+                FechaRegistro = usuario.FechaRegistro,
+                TipoUsuario = usuario.TipoUsuario,
+                Password = usuario.Password,
+                Salt = usuario.Salt,
+            };
+            await this.service.UpdateUsuarioData(usu);
+            return RedirectToAction("Perfil");
         }
-
     }
+
+
+        //public IActionResult SubirFichero()
+        //{
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> SubirFichero(IFormFile fichero)
+        //{
+        //    int idusuario = (int)HttpContext.Session.GetInt32("id");
+
+        //    if (fichero == null || fichero.Length == 0)
+        //    {
+        //        return BadRequest("No se envió un archivo.");
+        //    }
+
+        //    string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+        //    string extension = Path.GetExtension(fichero.FileName).ToLowerInvariant();
+
+        //    if (!permittedExtensions.Contains(extension))
+        //    {
+        //        return BadRequest("Extensión de archivo no permitida.");
+        //    }
+
+        //    if (fichero.Length > 2 * 1024 * 1024) // 2 MB
+        //    {
+        //        return BadRequest("El archivo excede el tamaño máximo permitido.");
+        //    }
+
+        //    // Generar un nombre único para el archivo
+        //    string fileName = $"usuario_{idusuario}{extension}";
+
+        //    // Ruta física donde guardar el archivo
+        //    string path = this.helperImages.MapPath(fileName, Folders.Users);
+
+        //    // Asegurarse de que la carpeta existe
+        //    string directory = Path.GetDirectoryName(path);
+        //    if (!Directory.Exists(directory))
+        //    {
+        //        Directory.CreateDirectory(directory);
+        //    }
+
+        //    // Guardar el archivo
+        //    using (var stream = new FileStream(path, FileMode.Create))
+        //    {
+        //        await fichero.CopyToAsync(stream);
+        //    }
+
+        //    // Guardar solo el nombre del archivo en la base de datos
+        //    await this.repo.UpdateFotoUsuario(idusuario, fileName);
+        //    var perfil = await this.repo.GetUsuario(idusuario);
+
+        //    return RedirectToAction("Perfil", perfil);
+        //}
 
 }

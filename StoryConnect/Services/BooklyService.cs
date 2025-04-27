@@ -104,6 +104,31 @@ namespace StoryConnect_V2.Services
             }
         }
 
+        private async Task CallDeleteAsync(string request)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.UrlApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.header);
+
+                // Recuperar token de sesión
+                string token = this.contextAccessor.HttpContext.User.FindFirst("TOKEN")?.Value;
+                if (!string.IsNullOrEmpty(token))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                HttpResponseMessage response = await client.DeleteAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string errorResponse = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error en DELETE: {response.StatusCode}\n{errorResponse}");
+                }
+            }
+        }
+
 
 
         public async Task<string> GetTokenAsync
@@ -241,10 +266,10 @@ namespace StoryConnect_V2.Services
             return mislibros;
         }
 
-        public async Task<ObjetivosUsuarios> MisObjetivos()
+        public async Task<List<ObjetivosUsuarios>> MisObjetivos()
         {
             string request = "/api/Usuarios/MisObjetivos";
-            ObjetivosUsuarios objetivos = await CallApiAsync<ObjetivosUsuarios>(request);
+            var objetivos = await CallApiAsync<List<ObjetivosUsuarios>>(request);
             return objetivos;
         }
 
@@ -252,6 +277,31 @@ namespace StoryConnect_V2.Services
         {
             string request = "/api/Usuarios/InsertObjetivo";
             await CallPostAsync<object>(request, objetivo);
+        }
+
+        public async Task DeleteObjetivoUsuario(int idObjetivo)
+        {
+            string request = "/api/Usuarios/DeleteObjetivo/" + idObjetivo;
+            await CallDeleteAsync(request);
+        }
+
+        public async Task UpdateProgresoObjetivo(ObjetivosUsuarios objetivo)
+        {
+            string request = "/api/Usuarios/UpdateProgreso";
+            await this.CallPutAsync(request, objetivo);
+        }
+
+        public async Task<Usuarios> GetUsuario(int idUsuario)
+        {
+            string request = "/api/Usuarios/GetUsuario?idUsuario=" + idUsuario;
+            var usuario = await this.CallApiAsync<Usuarios>(request);
+            return usuario;
+        }
+
+        public async Task UpdateUsuarioData(Usuarios usuario)
+        {
+            string request = "/api/Usuarios/UpdateUsuario";
+            await this.CallPutAsync(request, usuario);
         }
     }
 }

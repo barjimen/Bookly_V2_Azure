@@ -312,11 +312,11 @@
 </style>
 <div class="container" style="padding-top: 2rem!important; padding-bottom:6rem!important; background-color:whitesmoke" >
     <div class="row mb-4">
-        <div class="col-12 rounded" style="background-color:#56425D; width:200px;">
+        <div class="col-12 rounded">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb" >
                     <li class="breadcrumb-item"><a asp-action="Perfil">Inicio</a></li>
-                    <li class="breadcrumb-item active" aria-current="page" style="color:white">Mis Objetivos</li>
+                    <li class="breadcrumb-item active" aria-current="page" style="color:black">Mis Objetivos</li>
                 </ol>
             </nav>
         </div>
@@ -384,9 +384,17 @@
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="formProgreso-@objetivo.idObjetivo" method="post" action="/Usuarios/UpdateProgreso">
+                                <form id="formProgreso-@objetivo.idObjetivo" method="post" action="/Usuarios/UpdateProgresoObjetivo">
                                     <input type="hidden" id="idObjetivo" name="idObjetivo" value="@objetivo.idObjetivo" />
                                     <input type="hidden" id="idUsuario" name="idUsuario" value="@objetivo.IdUsuario" />
+                                    <input type="hidden" id="nombreObjetivo" name="nombreObjetivo" value="@objetivo.NombreObjetivo" />
+                                    <input type="hidden" id="inicio" name="inicio" value="@objetivo.Inicio" />
+                                    <input type="hidden" id="fin" name="fin" value="@objetivo.Fin" />
+                                    <input type="hidden" id="fin" name="fin" value="@objetivo.Fin" />
+                                    <input type="hidden" id="estado" name="estado" value="@objetivo.estado" />
+                                    <input type="hidden" id="tipoObjetivo" name="tipoObjetivo" value="@objetivo.TipoObjetivo" />
+                                    <input type="hidden" id="meta" name="meta" value="@objetivo.Meta" />
+
 
                                     <div class="mb-3">
                                         <label for="progreso" class="form-label">Progreso Actual:</label>
@@ -409,16 +417,17 @@
             </div>
             <hr />
             <div class="goal-header">
-                <div class="goal-label">Goal</div>
+                <div class="goal-label">Objetivo @objetivo.idObjetivo</div>
                 <div class="goal-label">
-                    <i class="fas fa-book me-1"></i> @objetivo.ProgresoActual/@objetivo.Meta books
+                    <i class="fas fa-book me-1"></i> @objetivo.ProgresoActual/@objetivo.Meta @objetivo.TipoObjetivo
                     <span class="ms-2">•</span>
-                    <span class="ms-2">@((objetivo.Fin - objetivo.Inicio).Days)</span>
+                    <span class="ms-2">@((objetivo.Fin - objetivo.Inicio).Days) días restantes</span>
                 </div>
             </div>
 
-            <h4 class="goal-title">2025 Reading Goal</h4>
-            <p>Read @objetivo.Meta books by Dec 30, 2025. You're 1 book ahead of schedule. 🙌</p>
+            <h4>
+                Leer @objetivo.Meta @objetivo.TipoObjetivo antes de @objetivo.Fin.ToString("dd/MM/yyyy")
+            </h4>
 
             <div class="goal-progress">
                 <div class="progress-bar" style="width: @percentComplete%"></div>
@@ -427,7 +436,7 @@
             <div class="goal-stats">
                 <div class="d-flex align-items-center gap-3">
                     <div class="progress-marker" style="width: 20px; height: 20px; background-color: var(--accent-color); border-radius: 4px;"></div>
-                    <span>@objetivo.ProgresoActual/@objetivo.Meta books</span>
+                    <span>@objetivo.ProgresoActual/@objetivo.Meta @objetivo.TipoObjetivo</span>
                 </div>
                 <div class="goal-percent">@percentComplete%</div>
             </div>

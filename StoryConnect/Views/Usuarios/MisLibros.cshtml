@@ -17,11 +17,11 @@
 
         <!-- Filtros -->
         <div class="filters">
-        <button id="btnAll" class="filter-btn active">All <span>@Model.CountLibrosPred.Sum(c => c.NumLibros)</span></button>
-        <button id="btnWantToRead" class="filter-btn">Want to Read <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 1)?.NumLibros ?? 0)</span></button>
-        <button id="btnCurrentlyReading" class="filter-btn">Currently Reading <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 2)?.NumLibros ?? 0)</span></button>
-        <button id="btnRead" class="filter-btn">Read <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 3)?.NumLibros ?? 0)</span></button>
-        <button id="btnDidNotFinish" class="filter-btn">Did Not Finish <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 4)?.NumLibros ?? 0)</span></button>
+        <button id="btnAll" class="filter-btn active">Ver todos <span>@Model.CountLibrosPred.Sum(c => c.NumLibros)</span></button>
+        <button id="btnWantToRead" class="filter-btn">Leyendo <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 1)?.NumLibros ?? 0)</span></button>
+        <button id="btnCurrentlyReading" class="filter-btn">Leídos <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 2)?.NumLibros ?? 0)</span></button>
+        <button id="btnRead" class="filter-btn">Próxima lectura <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 3)?.NumLibros ?? 0)</span></button>
+        <button id="btnDidNotFinish" class="filter-btn">Sin terminar <span> @(Model.CountLibrosPred.FirstOrDefault(c => c.Id == Model.IdUsuario && c.ListaId == 4)?.NumLibros ?? 0)</span></button>
         </div>
     </div>
 

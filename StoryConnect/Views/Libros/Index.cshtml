@@ -3,20 +3,11 @@
     ViewData["Title"] = "Biblioteca";
 }
 
-
 @{
     var idUser = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
     var nombre = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
     var email = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 }
-
-@if (User.Identity.IsAuthenticated)
-{
-
-    <p>Usuario: @email (ID: @idUser)</p>
-}
-
-
 <style>
     
 
@@ -99,37 +90,33 @@
     }
 </style>
 
+<h4>Biblioteca de Bookly 📚</h4>
+<hr />
+
 <div class="container-fluid" style="padding-top: 2rem!important; padding-bottom:6rem!important">
     <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#filtroAutores" aria-expanded="false" aria-controls="filtroAutores" style="cursor: pointer;">
-                    <h5 class="mb-0">Filtrar por autor</h5>
-                    <i class="bi bi-chevron-down"></i>
-                </div>
-                <select class="form-select mb-2" id="autorSelect">
-                    <option value="*">Mostrar Todos</option>
-                    @foreach (var autor in Model.Autores)
-                    {
-                        <option value=".autor-@autor.Id">@autor.Nombre</option>
-                    }
-                </select>
-                <select class="form-select mb-2" id="etiquetaSelect">
-                    <option value="*">Mostrar Todos</option>
-                    @foreach (var eti in Model.Etiquetas)
-                    {
-                        <option value=".autor-@eti.Id">@eti.Nombre</option>
-                    }
-                </select>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#filtroAutores" aria-expanded="false" aria-controls="filtroAutores" style="cursor: pointer;">
+                <h5 class="mb-0">Filtrar por autor</h5><i class="bi bi-chevron-down"></i>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text"><i class="fa fa-search"></i></span>
-                <input type="text" class="form-control quicksearch" id="quicksearch" placeholder="Buscar libros...">
-            </div>
+            <select class="form-select mb-2" id="autorSelect">
+                <option value="*">Mostrar Todos</option>
+                @foreach (var autor in Model.Autores)
+                {
+                    <option value=".autor-@autor.Id">@autor.Nombre</option>
+                }
+            </select>
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa fa-search"></i></span>
+            <input type="text" class="form-control quicksearch" id="quicksearch" placeholder="Buscar libros...">
+        </div>
+    </div>
+</div>
+
 
     <div class="row row-cols-1 row-cols-md-4 g-3 g-md-4" id="libros-grid">
         @foreach (var item in Model.Libros)

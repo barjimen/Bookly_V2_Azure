@@ -1,17 +1,17 @@
 ﻿@model Generos
-
-<h1 class="mb-4">📖 Libros del género: @Model.Genero.Nombre</h1>
-
 <div class="row mb-4">
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a asp-action="Generos">Generos</a></li>
-                <li class="breadcrumb-item active" aria-current="page">@Html.DisplayFor(model => model.Genero.Nombre)</li>
+                <li class="breadcrumb-item active" aria-current="page" style="color:white">@Html.DisplayFor(model => model.Genero.Nombre)</li>
             </ol>
         </nav>
     </div>
 </div>
+
+<h1 class="mb-4">📖 Libros del género: @Model.Genero.Nombre</h1>
+
 <div class="d-flex gap-3 pb-2" style="flex-wrap: wrap; justify-content: space-around">
     @foreach (var libro in Model.Libros)
     {

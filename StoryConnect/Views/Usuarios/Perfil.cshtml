@@ -17,305 +17,305 @@
     <style>
 
         body {
-            background-color: var(--primary-bg);
-            color: var(--text-color);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background-color: var(--primary-bg);
+        color: var(--text-color);
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         /* New Header Style */
         .profile-header {
-            background-color: var(--secondary-bg);
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
+        background-color: var(--secondary-bg);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        position: relative;
+        overflow: hidden;
         }
 
-            
+
 
         .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 4px solid var(--accent-color);
-            overflow: hidden;
-            background-color: #9c4a6e;
-            margin-right: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 4px solid var(--accent-color);
+        overflow: hidden;
+        background-color: #9c4a6e;
+        margin-right: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         }
 
         .profile-main-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
         }
 
         .profile-stats {
-            display: flex;
-            gap: 20px;
-            margin-top: 10px;
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
         }
 
         .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: rgba(0,0,0,0.2);
-            padding: 10px 20px;
-            border-radius: 8px;
-            min-width: 90px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: rgba(0,0,0,0.2);
+        padding: 10px 20px;
+        border-radius: 8px;
+        min-width: 90px;
         }
 
         .stat-number {
-            font-weight: bold;
-            color: var(--text-color);
-            font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--text-color);
+        font-size: 1.2rem;
         }
 
         .stat-label {
-            color: var(--muted-text);
-            font-size: 0.9rem;
+        color: var(--muted-text);
+        font-size: 0.9rem;
         }
 
         .profile-location {
-            color: var(--muted-text);
-            margin-top: 5px;
-            font-size: 0.9rem;
+        color: var(--muted-text);
+        margin-top: 5px;
+        font-size: 0.9rem;
         }
 
         .edit-btn {
-            background-color: var(--highlight);
-            border: none;
-            color: var(--text-color);
-            border-radius: 20px;
-            padding: 8px 20px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
+        background-color: var(--highlight);
+        border: none;
+        color: var(--text-color);
+        border-radius: 20px;
+        padding: 8px 20px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.2s;
         }
 
-            .edit-btn:hover {
-                background-color: #0563c5;
-                transform: translateY(-2px);
-            }
+        .edit-btn:hover {
+        background-color: #0563c5;
+        transform: translateY(-2px);
+        }
 
         .joined-tag {
-            color: var(--muted-text);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        color: var(--muted-text);
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
         }
 
         /* Accordion Styles */
         .accordion-item {
-            background-color: #cccccc;
-            border: none;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            overflow: hidden;
+        background-color: #cccccc;
+        border: none;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        overflow: hidden;
         }
 
         .accordion-button {
-            background-color: var(--secondary-bg);
-            color: var(--text-color);
-            border: none;
-            padding: 15px 20px;
-            font-weight: 600;
-            font-size: 1.1rem;
+        background-color: var(--secondary-bg);
+        color: var(--text-color);
+        border: none;
+        padding: 15px 20px;
+        font-weight: 600;
+        font-size: 1.1rem;
         }
 
-            .accordion-button:not(.collapsed) {
-                background-color: var(--secondary-bg);
-                color: var(--text-color);
-                box-shadow: none;
-            }
+        .accordion-button:not(.collapsed) {
+        background-color: var(--secondary-bg);
+        color: var(--text-color);
+        box-shadow: none;
+        }
 
-            .accordion-button:focus {
-                box-shadow: none;
-                border-color: transparent;
-            }
+        .accordion-button:focus {
+        box-shadow: none;
+        border-color: transparent;
+        }
 
-            .accordion-button::after {
-                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e9ecef'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-            }
+        .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e9ecef'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+        }
 
-            .accordion-button:not(.collapsed)::after {
-                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e9ecef'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-            }
+        .accordion-button:not(.collapsed)::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e9ecef'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+        }
 
         .book-list-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        transition: all 0.2s;
         }
 
-            .book-list-item:hover {
-                background-color: rgba(255,255,255,0.05);
-            }
+        .book-list-item:hover {
+        background-color: rgba(255,255,255,0.05);
+        }
 
-            .book-list-item:last-child {
-                border-bottom: none;
-            }
+        .book-list-item:last-child {
+        border-bottom: none;
+        }
 
         .book-cover-small {
-            width: 60px;
-            height: 90px;
-            object-fit: cover;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            margin-right: 15px;
+        width: 60px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        margin-right: 15px;
         }
 
         .book-info {
-            flex: 1;
-            color:black;
+        flex: 1;
+        color:black;
         }
 
         .book-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: black;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: black;
         }
 
         .book-author {
-            font-size: 0.9rem;
-            color: var(--muted-text);
-            margin-bottom: 5px;
-            color: black;
+        font-size: 0.9rem;
+        color: var(--muted-text);
+        margin-bottom: 5px;
+        color: black;
         }
 
         .book-date {
-            font-size: 0.8rem;
-            color: var(--muted-text);
-            color: black;
+        font-size: 0.8rem;
+        color: var(--muted-text);
+        color: black;
         }
 
         .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: auto;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: auto;
         }
 
         .badge-want {
-            background-color: #ffba08;
-            color: #1a2635;
+        background-color: #ffba08;
+        color: #1a2635;
         }
 
         .badge-reading {
-            background-color: #3a86ff;
-            color: white;
+        background-color: #3a86ff;
+        color: white;
         }
 
         .badge-read {
-            background-color: #2a9d8f;
-            color: white;
+        background-color: #2a9d8f;
+        color: white;
         }
 
         .badge-dnf {
-            background-color: #e63946;
-            color: white;
+        background-color: #e63946;
+        color: white;
         }
 
         .category-icon {
-            margin-right: 10px;
+        margin-right: 10px;
         }
 
         .badge-count {
-            background-color: var(--highlight);
-            color: white;
-            border-radius: 20px;
-            padding: 3px 12px;
-            font-weight: 500;
-            font-size: 14px;
-            margin-left: 10px;
+        background-color: var(--highlight);
+        color: white;
+        border-radius: 20px;
+        padding: 3px 12px;
+        font-weight: 500;
+        font-size: 14px;
+        margin-left: 10px;
         }
 
         .reading-goal {
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
+        background-color: var(--secondary-bg);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
         }
 
         .goal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
         }
 
         .goal-label {
-            font-size: 14px;
-            color: var(--muted-text);
+        font-size: 14px;
+        color: var(--muted-text);
         }
 
         .goal-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin: 10px 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin: 10px 0;
         }
 
         .goal-progress {
-            height: 10px;
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 15px;
+        height: 10px;
+        background-color: rgba(255,255,255,0.1);
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 15px;
         }
 
         .progress-bar {
-            height: 100%;
-            background-color: var(--accent-color);
+        height: 100%;
+        background-color: var(--accent-color);
         }
 
         .goal-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
         }
 
         .goal-percent {
-            background-color: #2a9d8f;
-            color: white;
-            border-radius: 20px;
-            padding: 3px 10px;
-            font-weight: 500;
+        background-color: #2a9d8f;
+        color: white;
+        border-radius: 20px;
+        padding: 3px 10px;
+        font-weight: 500;
         }
 
         .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 10px;
         }
 
         .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color:black;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color:black;
         }
 
         .see-all {
-            color: var(--highlight);
-            text-decoration: none;
-            font-size: 14px;
+        color: var(--highlight);
+        text-decoration: none;
+        font-size: 14px;
         }
     </style>
 </head>
@@ -330,7 +330,7 @@
                             @if (Model.Usuarios.ImagenPerfil == "default.jpg")
                             {
                                 <img src="https://storagebooklybja.blob.core.windows.net/imagesbookly/avatar.jpg"
-                                     style="width: 150px; height: 150px; object-fit: cover;
+                                style="width: 150px; height: 150px; object-fit: cover;
                                 background-color: #f8f9fa; border-radius: 50%;margin: 20px;
                                 position: relative; z-index: 5;" />
                             }
@@ -410,7 +410,7 @@
                             conteo = conteoItem.NumLibros;
                         }
 
-                       // Obtenemos los libros para esta lista
+                        // Obtenemos los libros para esta lista
                         var libros = Model.LibrosListasPred
                         .Where(l => l.Id == Model.Usuarios.Id && l.ListaId == listaId)
                         .OrderByDescending(l => l.Agregado_lista)
@@ -419,20 +419,20 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="heading@(accordionIndex)">
                                 <button class="accordion-button collapsed"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#collapse@(accordionIndex)"
-                                        aria-expanded="false"
-                                        aria-controls="collapse@(accordionIndex)">
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapse@(accordionIndex)"
+                                aria-expanded="false"
+                                aria-controls="collapse@(accordionIndex)">
                                     <i class="fas @icon category-icon me-2" style="color: @color"></i>
                                     @listaNombre
                                     <span class="badge-count">@conteo</span>
                                 </button>
                             </h2>
                             <div id="collapse@(accordionIndex)"
-                                 class="accordion-collapse collapse"
-                                 aria-labelledby="heading@(accordionIndex)"
-                                 data-bs-parent="#booksAccordion">
+                            class="accordion-collapse collapse"
+                            aria-labelledby="heading@(accordionIndex)"
+                            data-bs-parent="#booksAccordion">
                                 <div class="accordion-body p-0">
                                     @if (libros.Count == 0)
                                     {
@@ -466,39 +466,44 @@
         </div>
 
         <!-- Reading Goals Section -->
-    <div class="mt-5">
-        <div class="section-header">
-            <h3 class="section-title">
-                <i class="fas fa-chart-line me-2"></i> Mis objetivos @Model.Usuarios.Nombre
-            </h3>         
-        <a asp-action="MisObjetivos" asp-controller="Usuarios" asp-route-id="@Model.Usuarios.Id" class="btn btn-primary">Ver mis objetivos o editarlos</a>
-           
-        </div>
-        @if (Model.ObjetivosUsuarios != null && Model.ObjetivosUsuarios.Any())
-        {
-            @foreach (var objetivo in Model.ObjetivosUsuarios.Take(2)) // Solo los primeros dos
+        <div class="mt-5">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-line me-2"></i> Mis objetivos @Model.Usuarios.Nombre
+                </h3>         
+                <a asp-action="MisObjetivos" asp-controller="Usuarios" asp-route-id="@Model.Usuarios.Id" class="btn btn-primary">Ver mis objetivos o editarlos</a>
+
+            </div>
+            @if (Model.ObjetivosUsuarios != null && Model.ObjetivosUsuarios.Any())
             {
-                var percentComplete = (objetivo.ProgresoActual * 100) / objetivo.Meta;
+                @foreach (var objetivo in Model.ObjetivosUsuarios.Take(2))
+                {
+                    var percentComplete = (objetivo.ProgresoActual * 100) / objetivo.Meta;
 
-                <div class="reading-goal">
-                    <div class="goal-header">
-                        <div class="goal-label">Objetivo</div>
-                        <div class="goal-label">
-                            <i class="fas fa-book me-1"></i> @objetivo.ProgresoActual/@objetivo.Meta books
-                            <span class="ms-2">•</span>
-                            @{
-                                        var dias = (DateTime.Now - objetivo.Fin).Duration().Days;
+                    <div class="reading-goal">
+                        <div class="goal-header">
+                            <div class="goal-label">Objetivo @objetivo.idObjetivo</div>
+                            <div class="goal-label">
+                                <i class="fas fa-book me-1"></i> @objetivo.ProgresoActual/@objetivo.Meta books
+                                <span class="ms-2">•</span>
+                                @{
+                                    var dias = (DateTime.Now - objetivo.Fin).Duration().Days;
 
-                            }
-                                    <span class="ms-2">@dias días restantes.</span>
+                                }
+                                <span class="ms-2">@dias días restantes.</span>
+                            </div>
                         </div>
-                    </div>
 
-                    @if(objetivo.ProgresoActual > objetivo.Meta )
-                    {
-                                <h4 class="goal-title">@objetivo.NombreObjetivo</h4>
-                                <p>Has completado el objetivo!!!🙌</p>
-                    }
+                        @if(objetivo.ProgresoActual > objetivo.Meta )
+                        {
+                            <h4 class="goal-title">@objetivo.NombreObjetivo</h4>
+                            <p>Has completado el objetivo!!!🙌</p>
+                        }
+                        else
+                        {
+                            <h4 class="goal-title">@objetivo.NombreObjetivo</h4>
+                            <p>¡Ánimo, puedes con ello!</p>
+                        }
 
                     <div class="goal-progress">
                         <div class="progress-bar" style="width: @percentComplete%"></div>
@@ -519,9 +524,9 @@
 
                     <div class="text-center my-4">
                         <p style="color:black">No tienes ningún objetivo todavía 🎯</p>
-                        <button id="insertarObjetivo" class="btn btn-primary">Añadir Objetivo</button>
+                    <button id="insertarObjetivo" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalObjetivo">Añadir Objetivo</button>
                     </div>
-        }
+        
 
         <div>
             <div id="modalObjetivo" class="modal" tabindex="-1" aria-labelledby="modalObjetivoLabel" aria-hidden="true">
@@ -564,6 +569,7 @@
             </div>
 
         </div>
+        }
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -573,6 +579,7 @@
 
         document.getElementById("insertarObjetivo").addEventListener("click", function () {
             modal.show();
+        });
         });
     </script>
 </body>
