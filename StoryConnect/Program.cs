@@ -22,6 +22,7 @@ builder.Services.AddAzureClients(factory =>
 
 SecretClient secretClient = builder.Services.BuildServiceProvider().GetService<SecretClient>();
 KeyVaultSecret SecretOne = await secretClient.GetSecretAsync("StorySQL");
+KeyVaultSecret Storage = await secretClient.GetSecretAsync("Storage");
 
 string SecretSQL = SecretOne.Value;
 
