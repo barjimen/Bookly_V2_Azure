@@ -40,30 +40,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath = "/Libros/Index";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30); options.SlidingExpiration = true; // Opcional: renueva el tiempo si el usuario es activo
-
-        options.Events = new CookieAuthenticationEvents
-        {
-            OnRedirectToLogin = context =>
-            {
-                // Si el usuario está autenticado pero la cookie expiró, redirige a login
-                if (context.Request.Path.StartsWithSegments("/api/Usuarios/Login"))
-                {
-                    // Si es API, devuelves 401 en vez de redirigir
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                }
-                else
-                {
-                    context.Response.Redirect(context.RedirectUri);
-                }
-                return Task.CompletedTask;
-            },
-            OnRedirectToAccessDenied = context =>
-            {
-                context.Response.Redirect("/Libros/Index"); // Opcional si quieres controlar el acceso denegado
-                return Task.CompletedTask;
-            }
-        };
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     });
 
 

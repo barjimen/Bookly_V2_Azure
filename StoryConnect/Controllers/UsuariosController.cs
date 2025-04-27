@@ -23,7 +23,6 @@ namespace StoryConnect.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private IRepositoryLibros repo;
         private BooklyService service;
-        private readonly SecretClient secretClient;
         public UsuariosController(IRepositoryLibros repo, IWebHostEnvironment hostingEnvironment, BooklyService service)
         {
             _hostingEnvironment = hostingEnvironment;
@@ -201,8 +200,7 @@ namespace StoryConnect.Controllers
             string fileName = $"usuario_{idUser}{extension}";
 
             // Configuración del cliente de Azure Blob Storage
-            KeyVaultSecret storage = await secretClient.GetSecretAsync("Storage");
-            string connectionString = storage.Value.ToString();
+            string connectionString = "DefaultEndpointsProtocol=https;AccountName=storagebooklybja;AccountKey=GXewDrOYW2lH5a8ZkgG9SPKSoz+cPW2AQAIHihpC7dIKVgGGDtWuyaOYjEsNUS6DSyk451yzbD/++ASt3BsbQg==;EndpointSuffix=core.windows.net";
             string containerName = "imagesbookly";
 
             // Crear el cliente del contenedor
